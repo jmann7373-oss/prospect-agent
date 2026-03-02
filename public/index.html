@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospect Research Agent</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --accent: #c8f55a;
+    --accent-dim: rgba(200,245,90,0.08);
+    --text: #f0f0f0;
+    --muted: #666;
+    --danger: #ff4f4f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 2rem 2.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.03em;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+  }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    min-height: calc(100vh - 80px);
+  }
+
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  input, textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  input:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .priority-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .priority-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.78rem;
+    color: #999;
+  }
+
+  .priority-num {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .run-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: auto;
+  }
+
+  .run-btn:hover { opacity: 0.9; }
+  .run-btn:active { transform: scale(0.99); }
+  .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .output-panel {
+    padding: 2rem 2.5rem;
+    overflow-y: auto;
+  }
+
+  .empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .empty-icon { font-size: 3rem; opacity: 0.3; }
+
+  .empty-state p {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    max-width: 280px;
+  }
+
+  .brief {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 780px;
+  }
+
+  .brief-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .brief-header .prospect-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .brief-header .prospect-name span { color: var(--accent); }
+
+  .brief-header .company-name {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+
+  .section { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-content {
+    font-size: 0.83rem;
+    line-height: 1.8;
+    color: #ccc;
+    white-space: pre-wrap;
+  }
+
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 1.5rem;
+    color: var(--muted);
+  }
+
+  .loader {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-size: 0.78rem;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  .error-msg {
+    background: rgba(255,79,79,0.08);
+    border: 1px solid rgba(255,79,79,0.3);
+    color: var(--danger);
+    padding: 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .section-header { display: flex; align-items: center; gap: 0.5rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">prospect<span>.</span>agent</div>
+  <div class="badge">BDR Research Tool</div>
+</header>
+
+<main>
+  <aside class="sidebar">
+    <div><h2>Prospect Info</h2></div>
+
+    <div class="field">
+      <label>Prospect Full Name</label>
+      <input type="text" id="prospectName" placeholder="e.g. Sarah Chen" />
+    </div>
+
+    <div class="field">
+      <label>Company Name</label>
+      <input type="text" id="companyName" placeholder="e.g. Acme Corp" />
+    </div>
+
+    <div class="field">
+      <label>Job Title</label>
+      <input type="text" id="jobTitle" placeholder="e.g. VP of Sales" />
+    </div>
+
+    <div class="field">
+      <label>LinkedIn URL (optional)</label>
+      <input type="text" id="linkedinUrl" placeholder="https://linkedin.com/in/..." />
+    </div>
+
+    <div class="field">
+      <label>Your Product / Service</label>
+      <input type="text" id="yourProduct" placeholder="e.g. CRM software for sales teams" />
+    </div>
+
+    <div class="field">
+      <label>Research Priorities</label>
+      <div class="priority-list">
+        <div class="priority-item"><div class="priority-num">1</div> Prospect background & tenure</div>
+        <div class="priority-item"><div class="priority-num">2</div> Company news & announcements</div>
+        <div class="priority-item"><div class="priority-num">3</div> Recent funding rounds</div>
+        <div class="priority-item"><div class="priority-num">4</div> Hiring trends / open roles</div>
+        <div class="priority-item"><div class="priority-num">5</div> Tech stack</div>
+      </div>
+    </div>
+
+    <button class="run-btn" id="runBtn" onclick="runAgent()">Run Research Agent →</button>
+  </aside>
+
+  <section class="output-panel" id="outputPanel">
+    <div class="empty-state">
+      <div class="empty-icon">⬡</div>
+      <p>Enter a prospect's details on the left and hit Run to generate your research brief.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+async function runAgent() {
+  const name = document.getElementById('prospectName').value.trim();
+  const company = document.getElementById('companyName').value.trim();
+  const title = document.getElementById('jobTitle').value.trim();
+  const linkedin = document.getElementById('linkedinUrl').value.trim();
+  const product = document.getElementById('yourProduct').value.trim();
+
+  if (!name || !company) {
+    showError('Please fill in Prospect Name and Company Name.');
+    return;
+  }
+
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.textContent = 'Researching...';
+  showLoading(name, company);
+
+  const prompt = `You are an expert BDR research assistant. A sales rep is preparing to reach out to a prospect. Research the following person and company thoroughly using your knowledge and web search capabilities, then produce a structured research brief.
+
+PROSPECT: ${name}
+TITLE: ${title || 'Unknown'}
+COMPANY: ${company}
+LINKEDIN: ${linkedin || 'Not provided'}
+PRODUCT BEING SOLD: ${product || 'SaaS software'}
+
+Produce a research brief with these EXACT sections in this order:
+
+1. PROSPECT BACKGROUND
+- Current role and how long they've likely been there
+- Career trajectory and previous companies/roles
+- Areas of expertise and likely day-to-day responsibilities
+- What they likely care about in their role
+- Any public activity (posts, articles, talks, interviews)
+
+2. COMPANY SNAPSHOT
+- What the company does and who they serve
+- Company size, stage, and growth trajectory
+- Recent news, announcements, or press (last 12 months)
+- Key initiatives or strategic priorities
+- Competitive landscape (who are their main competitors)
+
+3. FUNDING & FINANCIALS
+- Funding history (rounds, amounts, investors, dates)
+- Revenue estimates or financial signals if public
+- What the funding signals about their priorities
+
+4. HIRING SIGNALS
+- Current open roles and what they reveal about company priorities
+- Recent team expansion or contraction
+- Which departments are growing
+
+5. TECH STACK
+- Known tools and software they use
+- Gaps or pain points your product might address
+
+6. CONVERSATION ANGLES
+- Top 3 specific, compelling reasons to reach out NOW based on the research
+- Potential pain points your product could solve for this person specifically
+- Risk factors or objections to anticipate
+
+Be specific and factual. If you don't know something, say so rather than guessing. Use bullet points within each section. Keep it scannable and actionable for a sales rep.`;
+
+  try {
+    const response = await fetch('/api/research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'API request failed');
+
+    const text = data.content
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('\n');
+
+    renderBrief(name, company, title, text);
+  } catch (err) {
+    showError(`Error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Run Research Agent →';
+  }
+}
+
+function showLoading(name, company) {
+  document.getElementById('outputPanel').innerHTML = `
+    <div class="loading">
+      <div class="loader"></div>
+      <div class="loading-text">Researching ${name} at ${company}...</div>
+    </div>`;
+}
+
+function showError(msg) {
+  document.getElementById('outputPanel').innerHTML = `<div class="error-msg">${msg}</div>`;
+}
+
+function parseSections(text) {
+  const sectionNames = ['PROSPECT BACKGROUND','COMPANY SNAPSHOT','FUNDING & FINANCIALS','HIRING SIGNALS','TECH STACK','CONVERSATION ANGLES'];
+  const sections = [];
+  const lines = text.split('\n');
+  let current = null, content = [];
+
+  for (const line of lines) {
+    const upper = line.toUpperCase().replace(/[^A-Z &]/g, '').trim();
+    const matched = sectionNames.find(s => upper.includes(s.replace(/[^A-Z &]/g, '')));
+    if (matched) {
+      if (current) sections.push({ title: current, content: content.join('\n').trim() });
+      current = matched; content = [];
+    } else if (current) content.push(line);
+  }
+  if (current) sections.push({ title: current, content: content.join('\n').trim() });
+  if (sections.length === 0) sections.push({ title: 'RESEARCH BRIEF', content: text });
+  return sections;
+}
+
+function renderBrief(name, company, title, text) {
+  const sections = parseSections(text);
+  const sectionsHTML = sections.map(s => `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-label">${s.title}</div>
+        <button class="copy-btn" onclick="copyText(this, \`${s.content.replace(/`/g, '\\`')}\`)">Copy</button>
+      </div>
+      <div class="section-content">${formatContent(s.content)}</div>
+    </div>`).join('');
+
+  document.getElementById('outputPanel').innerHTML = `
+    <div class="brief">
+      <div class="brief-header">
+        <div class="prospect-name">${name.split(' ')[0]} <span>${name.split(' ').slice(1).join(' ')}</span></div>
+        <div class="company-name">${title ? title + ' · ' : ''}${company}</div>
+      </div>
+      ${sectionsHTML}
+    </div>`;
+}
+
+function formatContent(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[-•]\s+(.+)$/gm, '<span style="display:block;padding-left:1rem;position:relative"><span style="position:absolute;left:0;color:var(--accent)">›</span>$1</span>');
+}
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') runAgent();
+});
+</script>
+</body>
+</html>
