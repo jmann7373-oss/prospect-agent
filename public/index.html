@@ -254,7 +254,7 @@ async function callPerplexity(prompt) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'llama-3.1-sonar-large-128k-online',
+      model: 'sonar',
       messages: [
         { role: 'system', content: 'You are an expert sales research assistant. Be specific, factual, and cite recent information. Use bullet points.' },
         { role: 'user', content: prompt }
