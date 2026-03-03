@@ -299,7 +299,7 @@ async function runAgent() {
   document.getElementById('outreachPanel').innerHTML = '<div class="outreach-loading">Generating outreach drafts...</div>';
 
   try {
-    const researchPrompt = `Research ${name}, who is ${title || 'a professional'} at ${company}. Provide a detailed brief covering:
+    const researchPrompt = `Research ${name}, who is ${title || 'a professional'} at ${company}.${linkedin ? ' Their LinkedIn profile is ' + linkedin + ' — use this to inform their background and career history.' : ''} Provide a detailed brief covering:
 
 1. PROSPECT BACKGROUND - Their career history, current role, how long they've been there, areas of expertise, any public content they've created (posts, talks, articles)
 
