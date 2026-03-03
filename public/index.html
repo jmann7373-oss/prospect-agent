@@ -38,76 +38,35 @@
 
   .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.03em; }
   .logo span { color: var(--accent); }
+  .badge { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; border: 1px solid var(--border); padding: 0.3rem 0.6rem; border-radius: 2px; }
 
-  .badge {
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-    padding: 0.3rem 0.6rem;
-    border-radius: 2px;
-  }
+  .app { flex: 1; display: grid; grid-template-columns: 290px 1fr 300px; min-height: calc(100vh - 70px); }
 
-  .app {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 290px 1fr 300px;
-    min-height: calc(100vh - 70px);
-  }
-
-  .sidebar {
-    border-right: 1px solid var(--border);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    overflow-y: auto;
-  }
-
+  .sidebar { border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; overflow-y: auto; }
   .sidebar-title { font-family: 'Syne', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
-
   .field { display: flex; flex-direction: column; gap: 0.4rem; }
   label { font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 
-  input {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    padding: 0.6rem 0.8rem;
-    border-radius: 4px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
+  input, textarea {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    font-family: 'DM Mono', monospace; font-size: 0.8rem; padding: 0.6rem 0.8rem;
+    border-radius: 4px; outline: none; transition: border-color 0.2s; width: 100%;
   }
-  input:focus { border-color: var(--accent); }
+  input:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
 
   .priority-list { display: flex; flex-direction: column; gap: 0.35rem; }
   .priority-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.71rem; color: #888; }
-  .priority-num {
-    width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: #000;
-    font-size: 0.55rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-family: 'Syne', sans-serif;
-  }
+  .priority-num { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: #000; font-size: 0.55rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Syne', sans-serif; }
 
-  .run-btn {
-    background: var(--accent); color: #000; border: none;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem;
-    letter-spacing: 0.05em; padding: 0.9rem; border-radius: 4px;
-    cursor: pointer; width: 100%; transition: opacity 0.2s, transform 0.1s; margin-top: auto;
-  }
+  .run-btn { background: var(--accent); color: #000; border: none; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.05em; padding: 0.9rem; border-radius: 4px; cursor: pointer; width: 100%; transition: opacity 0.2s, transform 0.1s; margin-top: auto; }
   .run-btn:hover { opacity: 0.9; }
   .run-btn:active { transform: scale(0.99); }
   .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .output-panel { padding: 2rem 2.5rem; overflow-y: auto; border-right: 1px solid var(--border); }
 
-  .empty-state {
-    height: 100%; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 1rem; color: var(--muted); text-align: center;
-  }
+  .empty-state { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: var(--muted); text-align: center; }
   .empty-icon { font-size: 3rem; opacity: 0.2; }
   .empty-state p { font-size: 0.78rem; line-height: 1.7; max-width: 260px; }
 
@@ -119,26 +78,29 @@
 
   .section { display: flex; flex-direction: column; gap: 0.6rem; }
   .section-header { display: flex; align-items: center; gap: 0.5rem; }
-  .section-label {
-    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
-    display: flex; align-items: center; gap: 0.5rem; flex: 1;
-  }
+  .section-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; flex: 1; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
   .section-content { font-size: 0.8rem; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
+
+  .conf-badge { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 2px; font-weight: 700; flex-shrink: 0; }
+  .conf-high { background: rgba(200,245,90,0.12); border: 1px solid rgba(200,245,90,0.3); color: var(--accent); }
+  .conf-medium { background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.3); color: #ffb400; }
+  .conf-low { background: rgba(255,79,79,0.1); border: 1px solid rgba(255,79,79,0.3); color: var(--danger); }
+  .conf-note { font-size: 0.68rem; color: var(--muted); font-style: italic; padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--border); margin-top: 0.2rem; }
 
   .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1.5rem; color: var(--muted); }
   .loader { width: 40px; height: 40px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-size: 0.75rem; animation: pulse 1.5s ease-in-out infinite; }
+  .loading-steps { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+  .loading-step { font-size: 0.68rem; color: var(--muted); }
+  .loading-step.active { color: var(--accent); }
+  .loading-step.done { color: #555; text-decoration: line-through; }
   @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
   .error-msg { background: rgba(255,79,79,0.08); border: 1px solid rgba(255,79,79,0.3); color: var(--danger); padding: 1rem; border-radius: 4px; font-size: 0.78rem; line-height: 1.6; }
 
-  .copy-btn {
-    background: transparent; border: 1px solid var(--border); color: var(--muted);
-    font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em;
-    text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; white-space: nowrap;
-  }
+  .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   .right-panel { overflow-y: auto; display: flex; flex-direction: column; }
@@ -178,6 +140,10 @@
     <div class="field"><label>Job Title</label><input type="text" id="jobTitle" placeholder="e.g. VP of Sales" /></div>
     <div class="field"><label>LinkedIn URL (optional)</label><input type="text" id="linkedinUrl" placeholder="https://linkedin.com/in/..." /></div>
     <div class="field"><label>Your Product / Service</label><input type="text" id="yourProduct" placeholder="e.g. CRM software for sales teams" /></div>
+    <div class="field">
+      <label>Notes / Context (optional)</label>
+      <textarea id="extraContext" placeholder="Paste anything you already know — a LinkedIn post, news article, mutual connection..."></textarea>
+    </div>
     <div class="field">
       <label>Research Priorities</label>
       <div class="priority-list">
@@ -245,7 +211,8 @@ function loadFromHistory(index) {
   document.getElementById('jobTitle').value = entry.title || '';
   document.getElementById('linkedinUrl').value = entry.linkedin || '';
   document.getElementById('yourProduct').value = entry.product || '';
-  if (entry.briefText) renderBrief(entry.name, entry.company, entry.title, entry.briefText);
+  document.getElementById('extraContext').value = entry.extraContext || '';
+  if (entry.sections) renderBrief(entry.name, entry.company, entry.title, entry.sections);
   if (entry.outreach) renderOutreach(entry.outreach);
 }
 
@@ -256,10 +223,10 @@ async function callPerplexity(prompt) {
     body: JSON.stringify({
       model: 'sonar',
       messages: [
-        { role: 'system', content: 'You are an expert sales research assistant. Be specific, factual, and cite recent information. Use bullet points.' },
+        { role: 'system', content: 'You are an expert sales research assistant. Be specific and factual. Only include information you are confident about. Clearly indicate when information is uncertain.' },
         { role: 'user', content: prompt }
       ],
-      max_tokens: 2000,
+      max_tokens: 1500,
       search_recency_filter: 'month'
     })
   });
@@ -283,12 +250,21 @@ async function callAnthropic(prompt) {
   return data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
 }
 
+function setLoadingStep(active) {
+  document.querySelectorAll('.loading-step').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i < active) el.classList.add('done');
+    else if (i === active) el.classList.add('active');
+  });
+}
+
 async function runAgent() {
   const name = document.getElementById('prospectName').value.trim();
   const company = document.getElementById('companyName').value.trim();
   const title = document.getElementById('jobTitle').value.trim();
   const linkedin = document.getElementById('linkedinUrl').value.trim();
   const product = document.getElementById('yourProduct').value.trim();
+  const extraContext = document.getElementById('extraContext').value.trim();
 
   if (!name || !company) { showError('Please fill in Prospect Name and Company Name.'); return; }
 
@@ -299,29 +275,104 @@ async function runAgent() {
   document.getElementById('outreachPanel').innerHTML = '<div class="outreach-loading">Generating outreach drafts...</div>';
 
   try {
-    const researchPrompt = `Research ${name}, who is ${title || 'a professional'} at ${company}.${linkedin ? ' Their LinkedIn profile is ' + linkedin + ' — use this to inform their background and career history.' : ''} Provide a detailed brief covering:
+    setLoadingStep(0);
+    const personPrompt = `Research ${name}, who works as ${title || 'a professional'} at ${company}.${linkedin ? ' Their LinkedIn: ' + linkedin : ''}
+${extraContext ? 'Additional context: ' + extraContext : ''}
 
-1. PROSPECT BACKGROUND - Their career history, current role, how long they've been there, areas of expertise, any public content they've created (posts, talks, articles)
+Focus ONLY on the individual:
+- Current role at ${company} and estimated tenure
+- Career history before ${company}
+- Areas of expertise and day-to-day responsibilities
+- Any public content: LinkedIn posts, articles, talks, interviews
+- Professional achievements or reputation
 
-2. COMPANY SNAPSHOT - What ${company} does, who they serve, company size, recent news and announcements from the last 6 months, strategic priorities, main competitors
+Be honest about what you cannot find. Do not fabricate details.`;
 
-3. FUNDING & FINANCIALS - Any funding rounds, investors, amounts, dates. Revenue estimates if public. What the funding signals about their growth stage.
+    const personData = await callPerplexity(personPrompt);
 
-4. HIRING SIGNALS - Current open roles and what they reveal about priorities. Which departments are growing. Any recent executive hires.
+    setLoadingStep(1);
+    const companyPrompt = `Research ${company} as a business.
 
-5. TECH STACK - Known tools and software ${company} uses based on job postings, integrations, or public info.
+Cover:
+- What ${company} does and who their customers are
+- Company size and growth stage
+- Recent news, press releases, product launches (last 6 months)
+- Funding history: rounds, amounts, investors, dates
+- Current job openings and which teams are hiring
+- Known tech stack and integrations
+- Main competitors
+- Strategic priorities
 
-6. CONVERSATION ANGLES - Based on everything above, what are the top 3 most compelling reasons a sales rep selling ${product || 'SaaS software'} should reach out to ${name} RIGHT NOW? What pain points might this person have?
+Be specific. Flag anything uncertain.`;
 
-Be specific and cite recent information. Use bullet points throughout.`;
+    const companyData = await callPerplexity(companyPrompt);
 
-    const briefText = await callPerplexity(researchPrompt);
-    renderBrief(name, company, title, briefText);
+    setLoadingStep(2);
+    const structurePrompt = `You are a sales research analyst. Combine these two research inputs into a structured brief and score each section's confidence.
 
-    const outreach = await generateOutreach(name, company, title, product, briefText);
+PERSON RESEARCH:
+${personData}
+
+COMPANY RESEARCH:
+${companyData}
+
+${extraContext ? 'ADDITIONAL CONTEXT:\n' + extraContext : ''}
+
+Return ONLY this JSON (no markdown, no explanation):
+{
+  "sections": [
+    {
+      "title": "PROSPECT BACKGROUND",
+      "content": "bullet point summary",
+      "confidence": "high|medium|low",
+      "confidenceNote": "one sentence explaining why, or null if high"
+    },
+    {
+      "title": "COMPANY SNAPSHOT",
+      "content": "bullet point summary",
+      "confidence": "high|medium|low",
+      "confidenceNote": "reason or null"
+    },
+    {
+      "title": "FUNDING & FINANCIALS",
+      "content": "bullet point summary",
+      "confidence": "high|medium|low",
+      "confidenceNote": "reason or null"
+    },
+    {
+      "title": "HIRING SIGNALS",
+      "content": "bullet point summary",
+      "confidence": "high|medium|low",
+      "confidenceNote": "reason or null"
+    },
+    {
+      "title": "TECH STACK",
+      "content": "bullet point summary",
+      "confidence": "high|medium|low",
+      "confidenceNote": "reason or null"
+    },
+    {
+      "title": "CONVERSATION ANGLES",
+      "content": "top 3 specific reasons to reach out NOW for a rep selling ${product || 'SaaS software'}",
+      "confidence": "high|medium|low",
+      "confidenceNote": "reason or null"
+    }
+  ]
+}
+
+Confidence rules: high = specific verified facts, medium = likely accurate but unconfirmed, low = limited info or mostly inferred.`;
+
+    const structured = await callAnthropic(structurePrompt);
+    const parsed = JSON.parse(structured.replace(/```json|```/g, '').trim());
+    const sections = parsed.sections;
+    renderBrief(name, company, title, sections);
+
+    setLoadingStep(3);
+    const briefSummary = sections.map(s => `${s.title}:\n${s.content}`).join('\n\n');
+    const outreach = await generateOutreach(name, company, title, product, briefSummary);
     renderOutreach(outreach);
 
-    saveToHistory({ name, company, title, linkedin, product, briefText, outreach, timestamp: Date.now() });
+    saveToHistory({ name, company, title, linkedin, product, extraContext, sections, outreach, timestamp: Date.now() });
 
   } catch (err) {
     showError(`Error: ${err.message}`);
@@ -333,16 +384,16 @@ Be specific and cite recent information. Use bullet points throughout.`;
 }
 
 async function generateOutreach(name, company, title, product, briefText) {
-  const prompt = `You are an expert BDR. Based on this research about ${name} (${title || 'a professional'}) at ${company}, write outreach for a sales rep selling ${product || 'SaaS software'}.
+  const prompt = `You are an expert BDR. Based on this research about ${name} (${title || 'professional'}) at ${company}, write outreach for a rep selling ${product || 'SaaS software'}.
 
 RESEARCH:
 ${briefText.slice(0, 2500)}
 
-Return ONLY this JSON with no explanation or markdown:
+Return ONLY this JSON, no explanation:
 {
-  "emailSubject": "A compelling cold email subject line under 8 words",
-  "emailBody": "A short cold email (4-6 sentences max). Opening line references something specific from the research. Clearly states the value prop. Ends with a soft call to action. No fluff. Sounds like a real human wrote it.",
-  "linkedin": "A LinkedIn connection message under 300 characters. Specific, not generic. References something real from the research. No emojis."
+  "emailSubject": "Compelling subject line under 8 words",
+  "emailBody": "Cold email 4-6 sentences. First line references something specific from the research. States value prop. Soft CTA. Sounds human.",
+  "linkedin": "LinkedIn message under 300 characters. Specific, references something real. No emojis."
 }`;
 
   try {
@@ -351,49 +402,46 @@ Return ONLY this JSON with no explanation or markdown:
   } catch {
     return {
       emailSubject: `Quick question about ${company}`,
-      emailBody: `Hi ${name.split(' ')[0]},\n\nI came across ${company} and was impressed by what you're building. I work with similar companies and thought there might be a fit worth exploring.\n\nWould you be open to a quick 15-minute call this week?\n\nBest,\n[Your Name]`,
-      linkedin: `Hi ${name.split(' ')[0]}, came across your profile and would love to connect — working with a few companies in your space.`
+      emailBody: `Hi ${name.split(' ')[0]},\n\nI came across ${company} and thought there might be a fit worth exploring.\n\nWould you be open to a 15-minute call this week?\n\nBest,\n[Your Name]`,
+      linkedin: `Hi ${name.split(' ')[0]}, came across your profile and would love to connect.`
     };
   }
 }
 
 function showLoading(name, company) {
   document.getElementById('outputPanel').innerHTML = `
-    <div class="loading"><div class="loader"></div>
-    <div class="loading-text">Researching ${name} at ${company} via Perplexity...</div></div>`;
+    <div class="loading">
+      <div class="loader"></div>
+      <div class="loading-text">Running dual research on ${name} & ${company}...</div>
+      <div class="loading-steps">
+        <div class="loading-step active">① Searching for ${name}...</div>
+        <div class="loading-step">② Searching for ${company}...</div>
+        <div class="loading-step">③ Scoring confidence...</div>
+        <div class="loading-step">④ Drafting outreach...</div>
+      </div>
+    </div>`;
 }
 
 function showError(msg) {
   document.getElementById('outputPanel').innerHTML = `<div class="error-msg">${msg}</div>`;
 }
 
-function parseSections(text) {
-  const names = ['PROSPECT BACKGROUND','COMPANY SNAPSHOT','FUNDING & FINANCIALS','HIRING SIGNALS','TECH STACK','CONVERSATION ANGLES'];
-  const sections = [], lines = text.split('\n');
-  let current = null, content = [];
-  for (const line of lines) {
-    const upper = line.toUpperCase().replace(/[^A-Z &]/g, '').trim();
-    const matched = names.find(s => upper.includes(s.replace(/[^A-Z &]/g, '')));
-    if (matched) {
-      if (current) sections.push({ title: current, content: content.join('\n').trim() });
-      current = matched; content = [];
-    } else if (current) content.push(line);
-  }
-  if (current) sections.push({ title: current, content: content.join('\n').trim() });
-  if (!sections.length) sections.push({ title: 'RESEARCH BRIEF', content: text });
-  return sections;
-}
+function renderBrief(name, company, title, sections) {
+  const html = sections.map(s => {
+    const confClass = `conf-${s.confidence}`;
+    const noteHtml = s.confidenceNote ? `<div class="conf-note">⚠ ${s.confidenceNote}</div>` : '';
+    return `
+      <div class="section">
+        <div class="section-header">
+          <div class="section-label">${s.title}</div>
+          <span class="conf-badge ${confClass}">${s.confidence.toUpperCase()}</span>
+          <button class="copy-btn" onclick="copyText(this,\`${s.content.replace(/\\/g,'\\\\').replace(/`/g,'\\`')}\`)">Copy</button>
+        </div>
+        ${noteHtml}
+        <div class="section-content">${formatContent(s.content)}</div>
+      </div>`;
+  }).join('');
 
-function renderBrief(name, company, title, text) {
-  const sections = parseSections(text);
-  const html = sections.map(s => `
-    <div class="section">
-      <div class="section-header">
-        <div class="section-label">${s.title}</div>
-        <button class="copy-btn" onclick="copyText(this,\`${s.content.replace(/\\/g,'\\\\').replace(/`/g,'\\`')}\`)">Copy</button>
-      </div>
-      <div class="section-content">${formatContent(s.content)}</div>
-    </div>`).join('');
   document.getElementById('outputPanel').innerHTML = `
     <div class="brief">
       <div class="brief-header">
