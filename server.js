@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/research', async (req, res) => {
-  const apiKey = process.env.ANTHROPIC_KEY;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
 
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured on server.' });
