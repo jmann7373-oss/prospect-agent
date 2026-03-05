@@ -344,14 +344,44 @@ Do NOT fill gaps with generic industry assumptions.`;
 
     const personResult = await callPerplexity(personPrompt);
 
-    // STEP 2: Company research with strict sourcing
+    // STEP 1.5: Extract company context from LinkedIn text if available
     setLoadingStep(1);
-    const companyPrompt = `Find verified, sourced information about the company "${company}".
+    let companyContext = { name: company, description: '', size: '', industry: '' };
+    if (linkedin) {
+      const extractPrompt = `Extract structured company information from this LinkedIn profile text. Return ONLY JSON, no explanation.
+
+LINKEDIN PROFILE TEXT:
+"""
+${linkedin.slice(0, 3000)}
+"""
+
+Return this JSON:
+{
+  "companyName": "exact company name as it appears",
+  "companyDescription": "what the company does based on the profile (job description, about section, etc.)",
+  "companySize": "employee count or size range if mentioned",
+  "industry": "industry or sector mentioned",
+  "prospectTeam": "which team or department the prospect works in",
+  "prospectResponsibilities": "key responsibilities or focus areas extracted from their role description",
+  "additionalContext": "any other company details mentioned (products, customers, tech, locations)"
+}`;
+      try {
+        const extracted = await callAnthropic(extractPrompt);
+        const parsed = JSON.parse(extracted.replace(/```json|```/g, '').trim());
+        companyContext = { ...companyContext, ...parsed };
+      } catch { /* fall through to defaults */ }
+    }
+
+    // STEP 2: Company research — armed with LinkedIn-extracted context
+    setLoadingStep(2);
+    const companyPrompt = `Find verified, sourced information about the company "${companyContext.companyName || company}".
+
+${companyContext.companyDescription ? `CONTEXT FROM PROSPECT'S LINKEDIN (use this to focus your search):\n- What they do: ${companyContext.companyDescription}\n- Industry: ${companyContext.industry || 'unknown'}\n- Size: ${companyContext.companySize || 'unknown'}\n- Additional: ${companyContext.additionalContext || 'none'}\n` : ''}
 
 Search for and report ONLY facts you can source. For each claim, note the source.
 
 Look for:
-1. What ${company} does — their product/service, target customers, value proposition (cite website or press)
+1. What ${companyContext.companyName || company} does — their product/service, target customers, value proposition (cite website or press)
 2. Company size — employee count with source and date (LinkedIn, Crunchbase, etc.)
 3. Funding history — each round: amount, date, round type, lead investors. Source required for each.
 4. Recent news — any press releases, product launches, partnerships, leadership changes in the last 6 months. Cite each item.
@@ -366,7 +396,7 @@ Do NOT fabricate funding amounts, headcount, or product details.`;
     const companyResult = await callPerplexity(companyPrompt);
 
     // STEP 3: Structure, score confidence strictly, extract sources
-    setLoadingStep(2);
+    setLoadingStep(3);
     const structurePrompt = `You are a senior sales research analyst synthesizing raw research into a verified brief.
 
 PERSON RESEARCH (raw):
@@ -376,6 +406,8 @@ COMPANY RESEARCH (raw):
 ${companyResult.content}
 
 ${linkedin ? `LINKEDIN PROFILE (pasted directly by user — treat as high-trust primary source for prospect background):\n"""\n${linkedin.slice(0, 2000)}\n"""\n` : ''}
+${companyContext.prospectTeam ? `PROSPECT'S TEAM: ${companyContext.prospectTeam}\n` : ''}
+${companyContext.prospectResponsibilities ? `PROSPECT'S RESPONSIBILITIES (from LinkedIn): ${companyContext.prospectResponsibilities}\n` : ''}
 ${extraContext ? `ADDITIONAL CONTEXT FROM USER:\n${extraContext}\n` : ''}
 
 CITED URLS FOUND: ${JSON.stringify(personResult.citations.concat(companyResult.citations))}
@@ -459,7 +491,7 @@ Return ONLY this JSON (no markdown, no explanation):
     renderBrief(name, company, title, sections);
 
     // STEP 4: Outreach
-    setLoadingStep(3);
+    setLoadingStep(4);
     const briefSummary = sections
       .filter(s => !s.omitted && s.content)
       .map(s => `${s.title}:\n${s.content}`)
@@ -531,9 +563,10 @@ function showLoading(name, company) {
       <div class="loading-text">Running dual research on ${name} & ${company}...</div>
       <div class="loading-steps">
         <div class="loading-step active">① Sourcing ${name}...</div>
-        <div class="loading-step">② Sourcing ${company}...</div>
-        <div class="loading-step">③ Verifying & scoring confidence...</div>
-        <div class="loading-step">④ Drafting ${selectedTone} outreach...</div>
+        <div class="loading-step">② Extracting company from LinkedIn...</div>
+        <div class="loading-step">③ Searching ${company}...</div>
+        <div class="loading-step">④ Verifying & scoring confidence...</div>
+        <div class="loading-step">⑤ Drafting ${selectedTone} outreach...</div>
       </div>
     </div>`;
 }
