@@ -47,17 +47,14 @@
   .field { display: flex; flex-direction: column; gap: 0.4rem; }
   label { font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 
-  input, textarea {
+  input, textarea, select {
     background: var(--surface); border: 1px solid var(--border); color: var(--text);
     font-family: 'DM Mono', monospace; font-size: 0.8rem; padding: 0.6rem 0.8rem;
     border-radius: 4px; outline: none; transition: border-color 0.2s; width: 100%;
   }
-  input:focus, textarea:focus { border-color: var(--accent); }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
   textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-
-  .priority-list { display: flex; flex-direction: column; gap: 0.35rem; }
-  .priority-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.71rem; color: #888; }
-  .priority-num { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: #000; font-size: 0.55rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Syne', sans-serif; }
+  select option { background: #1a1a1a; }
 
   .run-btn { background: var(--accent); color: #000; border: none; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.05em; padding: 0.9rem; border-radius: 4px; cursor: pointer; width: 100%; transition: opacity 0.2s, transform 0.1s; margin-top: auto; }
   .run-btn:hover { opacity: 0.9; }
@@ -77,8 +74,8 @@
   .brief-header .company-name { font-size: 0.82rem; color: var(--muted); margin-top: 0.3rem; }
 
   .section { display: flex; flex-direction: column; gap: 0.6rem; }
-  .section-header { display: flex; align-items: center; gap: 0.5rem; }
-  .section-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; flex: 1; }
+  .section-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .section-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 0; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
   .section-content { font-size: 0.8rem; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
 
@@ -87,6 +84,19 @@
   .conf-medium { background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.3); color: #ffb400; }
   .conf-low { background: rgba(255,79,79,0.1); border: 1px solid rgba(255,79,79,0.3); color: var(--danger); }
   .conf-note { font-size: 0.68rem; color: var(--muted); font-style: italic; padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--border); margin-top: 0.2rem; }
+
+  /* Sources */
+  .sources-list { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+  .sources-label { font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem; }
+  .source-link { font-size: 0.65rem; color: #555; display: flex; align-items: baseline; gap: 0.4rem; line-height: 1.4; }
+  .source-link::before { content: '→'; color: var(--accent); flex-shrink: 0; font-size: 0.6rem; }
+  .source-link a { color: #888; text-decoration: none; word-break: break-all; }
+  .source-link a:hover { color: var(--accent); }
+  .source-snippet { color: #444; font-size: 0.6rem; margin-left: 0.9rem; display: block; line-height: 1.4; }
+
+  /* Omitted notice */
+  .omitted-notice { background: rgba(255,79,79,0.05); border: 1px solid rgba(255,79,79,0.15); border-radius: 4px; padding: 0.5rem 0.7rem; font-size: 0.67rem; color: #884444; line-height: 1.5; margin-top: 0.3rem; }
+  .omitted-notice strong { color: var(--danger); }
 
   .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1.5rem; color: var(--muted); }
   .loader { width: 40px; height: 40px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -115,6 +125,11 @@
   .outreach-item-subject { font-size: 0.72rem; color: var(--text); margin-bottom: 0.5rem; font-weight: 500; }
   .outreach-item-footer { display: flex; justify-content: flex-end; margin-top: 0.6rem; }
 
+  .tone-selector { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .tone-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.6rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+  .tone-btn:hover { border-color: #444; color: var(--text); }
+  .tone-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,245,90,0.06); }
+
   .history-list { display: flex; flex-direction: column; gap: 0.5rem; }
   .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.7rem 0.9rem; cursor: pointer; transition: border-color 0.2s; }
   .history-item:hover { border-color: var(--accent); }
@@ -123,13 +138,20 @@
   .history-empty { font-size: 0.72rem; color: var(--muted); line-height: 1.6; }
   .outreach-loading { font-size: 0.72rem; color: var(--muted); animation: pulse 1.5s ease-in-out infinite; padding: 0.5rem 0; }
   .source-tag { display: inline-block; font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(200,245,90,0.08); border: 1px solid rgba(200,245,90,0.2); color: var(--accent); padding: 0.15rem 0.4rem; border-radius: 2px; margin-left: 0.5rem; vertical-align: middle; }
+
+  /* Accuracy bar */
+  .accuracy-bar { display: flex; align-items: center; gap: 0.8rem; padding: 0.75rem 1rem; background: rgba(200,245,90,0.04); border: 1px solid rgba(200,245,90,0.1); border-radius: 4px; margin-bottom: 1.5rem; }
+  .accuracy-label { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .accuracy-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+  .accuracy-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.6s ease; }
+  .accuracy-pct { font-size: 0.7rem; color: var(--accent); font-weight: 500; white-space: nowrap; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">prospect<span>.</span>agent</div>
-  <div class="badge">BDR Research Tool</div>
+  <div class="badge">BDR Research Tool v2</div>
 </header>
 
 <div class="app">
@@ -138,20 +160,23 @@
     <div class="field"><label>Prospect Full Name</label><input type="text" id="prospectName" placeholder="e.g. Sarah Chen" /></div>
     <div class="field"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. Acme Corp" /></div>
     <div class="field"><label>Job Title</label><input type="text" id="jobTitle" placeholder="e.g. VP of Sales" /></div>
-    <div class="field"><label>LinkedIn URL (optional)</label><input type="text" id="linkedinUrl" placeholder="https://linkedin.com/in/..." /></div>
+    <div class="field">
+      <label>LinkedIn Profile Text <span style="color:#444;font-size:0.58rem;text-transform:none;letter-spacing:0">(paste from profile page)</span></label>
+      <textarea id="linkedinText" placeholder="Open their LinkedIn profile → select all text → paste here. This gives the agent direct access to their experience, posts, and bio." style="min-height:100px"></textarea>
+      <div style="font-size:0.6rem;color:#444;line-height:1.5;margin-top:0.2rem">Tip: Ctrl+A on the profile page, then paste. LinkedIn URLs can't be crawled directly.</div>
+    </div>
     <div class="field"><label>Your Product / Service</label><input type="text" id="yourProduct" placeholder="e.g. CRM software for sales teams" /></div>
     <div class="field">
       <label>Notes / Context (optional)</label>
       <textarea id="extraContext" placeholder="Paste anything you already know — a LinkedIn post, news article, mutual connection..."></textarea>
     </div>
     <div class="field">
-      <label>Research Priorities</label>
-      <div class="priority-list">
-        <div class="priority-item"><div class="priority-num">1</div> Prospect background & tenure</div>
-        <div class="priority-item"><div class="priority-num">2</div> Company news & announcements</div>
-        <div class="priority-item"><div class="priority-num">3</div> Recent funding rounds</div>
-        <div class="priority-item"><div class="priority-num">4</div> Hiring trends / open roles</div>
-        <div class="priority-item"><div class="priority-num">5</div> Tech stack</div>
+      <label>Outreach Tone</label>
+      <div class="tone-selector">
+        <button class="tone-btn active" data-tone="direct" onclick="selectTone(this)">Direct</button>
+        <button class="tone-btn" data-tone="formal" onclick="selectTone(this)">Formal</button>
+        <button class="tone-btn" data-tone="casual" onclick="selectTone(this)">Casual</button>
+        <button class="tone-btn" data-tone="witty" onclick="selectTone(this)">Witty</button>
       </div>
     </div>
     <button class="run-btn" id="runBtn" onclick="runAgent()">Run Research Agent →</button>
@@ -177,8 +202,16 @@
 </div>
 
 <script>
+let selectedTone = 'direct';
+
+function selectTone(btn) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedTone = btn.dataset.tone;
+}
+
 function getHistory() {
-  try { return JSON.parse(localStorage.getItem('prospect_history') || '[]'); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem('prospect_history_v2') || '[]'); } catch { return []; }
 }
 
 function saveToHistory(entry) {
@@ -187,7 +220,7 @@ function saveToHistory(entry) {
   if (i >= 0) history.splice(i, 1);
   history.unshift(entry);
   if (history.length > 20) history.pop();
-  localStorage.setItem('prospect_history', JSON.stringify(history));
+  localStorage.setItem('prospect_history_v2', JSON.stringify(history));
   renderHistory();
 }
 
@@ -209,7 +242,7 @@ function loadFromHistory(index) {
   document.getElementById('prospectName').value = entry.name;
   document.getElementById('companyName').value = entry.company;
   document.getElementById('jobTitle').value = entry.title || '';
-  document.getElementById('linkedinUrl').value = entry.linkedin || '';
+  document.getElementById('linkedinText').value = entry.linkedin || '';
   document.getElementById('yourProduct').value = entry.product || '';
   document.getElementById('extraContext').value = entry.extraContext || '';
   if (entry.sections) renderBrief(entry.name, entry.company, entry.title, entry.sections);
@@ -223,16 +256,31 @@ async function callPerplexity(prompt) {
     body: JSON.stringify({
       model: 'sonar',
       messages: [
-        { role: 'system', content: 'You are an expert sales research assistant. Be specific and factual. Only include information you are confident about. Clearly indicate when information is uncertain.' },
+        {
+          role: 'system',
+          content: `You are a meticulous sales research analyst with extremely high standards for factual accuracy.
+
+CRITICAL RULES you must follow without exception:
+1. NEVER invent, infer, or guess facts. If you do not have a verified source, omit the information entirely.
+2. Every specific claim (dates, amounts, titles, product names, headcount) MUST have a real source you can cite.
+3. For each piece of information, note the source URL or publication name and approximate date.
+4. If a section has insufficient verified data, say so explicitly rather than filling with vague generalities.
+5. Do NOT say things like "likely", "probably", or "may have" — either you know it with a source or you don't include it.
+6. Recency matters: prioritize information from the last 6 months. Flag anything older than 12 months.`
+        },
         { role: 'user', content: prompt }
       ],
-      max_tokens: 1500,
-      search_recency_filter: 'month'
+      max_tokens: 2000,
+      search_recency_filter: 'month',
+      return_citations: true
     })
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error?.message || 'Perplexity request failed');
-  return data.choices?.[0]?.message?.content || '';
+  return {
+    content: data.choices?.[0]?.message?.content || '',
+    citations: data.citations || []
+  };
 }
 
 async function callAnthropic(prompt) {
@@ -241,7 +289,7 @@ async function callAnthropic(prompt) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
+      max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }]
     })
   });
@@ -262,7 +310,7 @@ async function runAgent() {
   const name = document.getElementById('prospectName').value.trim();
   const company = document.getElementById('companyName').value.trim();
   const title = document.getElementById('jobTitle').value.trim();
-  const linkedin = document.getElementById('linkedinUrl').value.trim();
+  const linkedin = document.getElementById('linkedinText').value.trim();
   const product = document.getElementById('yourProduct').value.trim();
   const extraContext = document.getElementById('extraContext').value.trim();
 
@@ -275,101 +323,149 @@ async function runAgent() {
   document.getElementById('outreachPanel').innerHTML = '<div class="outreach-loading">Generating outreach drafts...</div>';
 
   try {
+    // STEP 1: Person research with strict sourcing instructions
     setLoadingStep(0);
-    const personPrompt = `Research ${name}, who works as ${title || 'a professional'} at ${company}.${linkedin ? ' Their LinkedIn: ' + linkedin : ''}
-${extraContext ? 'Additional context: ' + extraContext : ''}
+    const personPrompt = `Find verified, sourced information about ${name}, ${title ? `who holds the title "${title}"` : 'a professional'} at ${company}.
+${linkedin ? `\nLINKEDIN PROFILE TEXT (treat this as ground truth — extract facts directly from here):\n"""\n${linkedin.slice(0, 3000)}\n"""` : ''}
+${extraContext ? `\nAdditional context provided:\n${extraContext}` : ''}
 
-Focus ONLY on the individual:
-- Current role at ${company} and estimated tenure
-- Career history before ${company}
-- Areas of expertise and day-to-day responsibilities
-- Any public content: LinkedIn posts, articles, talks, interviews
-- Professional achievements or reputation
+Search for and report ONLY what you can find with real sources. For each fact, note your source.
 
-Be honest about what you cannot find. Do not fabricate details.`;
+Look for:
+1. Current role at ${company}: exact title, start date if available
+2. Career history: previous companies, roles, rough dates — only if you can find evidence
+3. Public content: any LinkedIn posts, articles, talks, podcast appearances, interviews they've given
+4. Professional background: education, specializations — only verified sources
+5. Any notable achievements, awards, or recognitions with specific details
 
-    const personData = await callPerplexity(personPrompt);
+FOR EACH CLAIM: state the source (publication name, URL, or "LinkedIn profile") and approximate date.
+If you cannot find verified information about a section, state: "No verified information found for [topic]."
+Do NOT fill gaps with generic industry assumptions.`;
 
+    const personResult = await callPerplexity(personPrompt);
+
+    // STEP 2: Company research with strict sourcing
     setLoadingStep(1);
-    const companyPrompt = `Research ${company} as a business.
+    const companyPrompt = `Find verified, sourced information about the company "${company}".
 
-Cover:
-- What ${company} does and who their customers are
-- Company size and growth stage
-- Recent news, press releases, product launches (last 6 months)
-- Funding history: rounds, amounts, investors, dates
-- Current job openings and which teams are hiring
-- Known tech stack and integrations
-- Main competitors
-- Strategic priorities
+Search for and report ONLY facts you can source. For each claim, note the source.
 
-Be specific. Flag anything uncertain.`;
+Look for:
+1. What ${company} does — their product/service, target customers, value proposition (cite website or press)
+2. Company size — employee count with source and date (LinkedIn, Crunchbase, etc.)
+3. Funding history — each round: amount, date, round type, lead investors. Source required for each.
+4. Recent news — any press releases, product launches, partnerships, leadership changes in the last 6 months. Cite each item.
+5. Current job openings — which departments are hiring? Cite the job board or LinkedIn.
+6. Known tech stack — tools or platforms they use publicly (from job postings, case studies, integrations page)
+7. Key competitors — who they compete with directly
 
-    const companyData = await callPerplexity(companyPrompt);
+FOR EACH CLAIM: state the source and date.
+If you cannot find verified data for a section, state: "No verified information found for [topic]."
+Do NOT fabricate funding amounts, headcount, or product details.`;
 
+    const companyResult = await callPerplexity(companyPrompt);
+
+    // STEP 3: Structure, score confidence strictly, extract sources
     setLoadingStep(2);
-    const structurePrompt = `You are a sales research analyst. Combine these two research inputs into a structured brief and score each section's confidence.
+    const structurePrompt = `You are a senior sales research analyst synthesizing raw research into a verified brief.
 
-PERSON RESEARCH:
-${personData}
+PERSON RESEARCH (raw):
+${personResult.content}
 
-COMPANY RESEARCH:
-${companyData}
+COMPANY RESEARCH (raw):
+${companyResult.content}
 
-${extraContext ? 'ADDITIONAL CONTEXT:\n' + extraContext : ''}
+${linkedin ? `LINKEDIN PROFILE (pasted directly by user — treat as high-trust primary source for prospect background):\n"""\n${linkedin.slice(0, 2000)}\n"""\n` : ''}
+${extraContext ? `ADDITIONAL CONTEXT FROM USER:\n${extraContext}\n` : ''}
+
+CITED URLS FOUND: ${JSON.stringify(personResult.citations.concat(companyResult.citations))}
+
+Your job: structure this into a verified brief. Apply these STRICT confidence rules:
+
+CONFIDENCE SCORING RULES (be conservative — when in doubt, go lower):
+- "high": Multiple independent sources confirm the same specific fact with dates/numbers. Very recent (< 6 months).
+- "medium": Single source, or fact is plausible but only one reference found, or information is 6–18 months old.
+- "low": Inferred from indirect evidence, unverified, older than 18 months, or from a single low-authority source.
+- NEVER mark a section "high" if any key facts in it are unverified or missing.
+
+OMISSION RULE: If a section has no verified facts, set content to null and omitted to true with a reason.
 
 Return ONLY this JSON (no markdown, no explanation):
 {
   "sections": [
     {
       "title": "PROSPECT BACKGROUND",
-      "content": "bullet point summary",
+      "content": "verified bullet points only, or null",
       "confidence": "high|medium|low",
-      "confidenceNote": "one sentence explaining why, or null if high"
+      "confidenceNote": "specific reason for this confidence level — what's verified vs. what's missing",
+      "omitted": false,
+      "omittedReason": null,
+      "sources": [
+        { "label": "short source name", "url": "url or null", "snippet": "what this source confirmed" }
+      ]
     },
     {
       "title": "COMPANY SNAPSHOT",
-      "content": "bullet point summary",
+      "content": "verified bullet points only, or null",
       "confidence": "high|medium|low",
-      "confidenceNote": "reason or null"
+      "confidenceNote": "specific reason",
+      "omitted": false,
+      "omittedReason": null,
+      "sources": []
     },
     {
       "title": "FUNDING & FINANCIALS",
-      "content": "bullet point summary",
+      "content": "verified bullet points with round names, amounts, dates, investors — or null",
       "confidence": "high|medium|low",
-      "confidenceNote": "reason or null"
+      "confidenceNote": "specific reason",
+      "omitted": false,
+      "omittedReason": null,
+      "sources": []
     },
     {
       "title": "HIRING SIGNALS",
-      "content": "bullet point summary",
+      "content": "verified open roles or hiring trends — or null",
       "confidence": "high|medium|low",
-      "confidenceNote": "reason or null"
+      "confidenceNote": "specific reason",
+      "omitted": false,
+      "omittedReason": null,
+      "sources": []
     },
     {
       "title": "TECH STACK",
-      "content": "bullet point summary",
+      "content": "verified tools/platforms with evidence — or null",
       "confidence": "high|medium|low",
-      "confidenceNote": "reason or null"
+      "confidenceNote": "specific reason",
+      "omitted": false,
+      "omittedReason": null,
+      "sources": []
     },
     {
       "title": "CONVERSATION ANGLES",
-      "content": "top 3 specific reasons to reach out NOW for a rep selling ${product || 'SaaS software'}",
+      "content": "3 specific outreach angles — each MUST cite a specific verified fact from this research as the trigger. Format: [Angle]: [one sentence], because [specific cited evidence]. Do not invent triggers.",
       "confidence": "high|medium|low",
-      "confidenceNote": "reason or null"
+      "confidenceNote": "based on quality of underlying research",
+      "omitted": false,
+      "omittedReason": null,
+      "sources": []
     }
   ]
-}
-
-Confidence rules: high = specific verified facts, medium = likely accurate but unconfirmed, low = limited info or mostly inferred.`;
+}`;
 
     const structured = await callAnthropic(structurePrompt);
     const parsed = JSON.parse(structured.replace(/```json|```/g, '').trim());
     const sections = parsed.sections;
+
     renderBrief(name, company, title, sections);
 
+    // STEP 4: Outreach
     setLoadingStep(3);
-    const briefSummary = sections.map(s => `${s.title}:\n${s.content}`).join('\n\n');
-    const outreach = await generateOutreach(name, company, title, product, briefSummary);
+    const briefSummary = sections
+      .filter(s => !s.omitted && s.content)
+      .map(s => `${s.title}:\n${s.content}`)
+      .join('\n\n');
+
+    const outreach = await generateOutreach(name, company, title, product, briefSummary, selectedTone);
     renderOutreach(outreach);
 
     saveToHistory({ name, company, title, linkedin, product, extraContext, sections, outreach, timestamp: Date.now() });
@@ -383,17 +479,35 @@ Confidence rules: high = specific verified facts, medium = likely accurate but u
   }
 }
 
-async function generateOutreach(name, company, title, product, briefText) {
-  const prompt = `You are an expert BDR. Based on this research about ${name} (${title || 'professional'}) at ${company}, write outreach for a rep selling ${product || 'SaaS software'}.
+async function generateOutreach(name, company, title, product, briefText, tone) {
+  const toneInstructions = {
+    direct: 'Direct and confident. No fluff. Get to the point in the first sentence. Professional but not stiff.',
+    formal: 'Formal and polished. Complete sentences. Respectful and professional throughout.',
+    casual: 'Casual and conversational. Sounds like a human wrote it, not a sales bot. Slightly informal.',
+    witty: 'Subtly witty — one clever observation or unexpected angle. Still professional, not trying too hard.'
+  };
 
-RESEARCH:
-${briefText.slice(0, 2500)}
+  const prompt = `You are an expert BDR. Based on this research about ${name} (${title || 'professional'} at ${company}), write outreach for a rep selling ${product || 'SaaS software'}.
+
+TONE: ${toneInstructions[tone] || toneInstructions.direct}
+
+RESEARCH (only use specific facts from here — do not invent anything):
+${briefText.slice(0, 3000)}
+
+RULES:
+- The first line of the email MUST reference a specific, real detail from the research (a recent news item, a hiring trend, a funding round, something they said publicly). Do not use generic openers.
+- Do not use phrases like "I noticed", "I came across", "I saw that" — find more original openers.
+- The email should be 4–5 sentences max. No more.
+- LinkedIn message must be under 280 characters.
+- If the research doesn't have enough specific details for a strong personalized opener, say so in emailBody starting with "NOTE: " and provide a template with [FILL IN] placeholders instead.
 
 Return ONLY this JSON, no explanation:
 {
-  "emailSubject": "Compelling subject line under 8 words",
-  "emailBody": "Cold email 4-6 sentences. First line references something specific from the research. States value prop. Soft CTA. Sounds human.",
-  "linkedin": "LinkedIn message under 300 characters. Specific, references something real. No emojis."
+  "emailSubject": "Subject line under 8 words — specific, not clickbait",
+  "emailBody": "4-5 sentence cold email. First line is hyper-specific. Ends with soft CTA.",
+  "linkedin": "Under 280 chars. References something real. No emojis.",
+  "personalizationScore": 1-10,
+  "personalizationNote": "one sentence on what makes this specific or what's missing"
 }`;
 
   try {
@@ -402,8 +516,10 @@ Return ONLY this JSON, no explanation:
   } catch {
     return {
       emailSubject: `Quick question about ${company}`,
-      emailBody: `Hi ${name.split(' ')[0]},\n\nI came across ${company} and thought there might be a fit worth exploring.\n\nWould you be open to a 15-minute call this week?\n\nBest,\n[Your Name]`,
-      linkedin: `Hi ${name.split(' ')[0]}, came across your profile and would love to connect.`
+      emailBody: `Hi ${name.split(' ')[0]},\n\n[NOTE: Insufficient research data for personalization — fill in specific detail here.]\n\nWould you be open to a 15-minute call this week?\n\nBest,\n[Your Name]`,
+      linkedin: `Hi ${name.split(' ')[0]}, came across your profile and would love to connect.`,
+      personalizationScore: 1,
+      personalizationNote: 'Fallback template — research failed to return usable data.'
     };
   }
 }
@@ -414,10 +530,10 @@ function showLoading(name, company) {
       <div class="loader"></div>
       <div class="loading-text">Running dual research on ${name} & ${company}...</div>
       <div class="loading-steps">
-        <div class="loading-step active">① Searching for ${name}...</div>
-        <div class="loading-step">② Searching for ${company}...</div>
-        <div class="loading-step">③ Scoring confidence...</div>
-        <div class="loading-step">④ Drafting outreach...</div>
+        <div class="loading-step active">① Sourcing ${name}...</div>
+        <div class="loading-step">② Sourcing ${company}...</div>
+        <div class="loading-step">③ Verifying & scoring confidence...</div>
+        <div class="loading-step">④ Drafting ${selectedTone} outreach...</div>
       </div>
     </div>`;
 }
@@ -426,19 +542,56 @@ function showError(msg) {
   document.getElementById('outputPanel').innerHTML = `<div class="error-msg">${msg}</div>`;
 }
 
+function calcAccuracy(sections) {
+  if (!sections || !sections.length) return 0;
+  const scores = { high: 100, medium: 60, low: 20 };
+  const active = sections.filter(s => !s.omitted);
+  if (!active.length) return 0;
+  const avg = active.reduce((sum, s) => sum + (scores[s.confidence] || 0), 0) / active.length;
+  return Math.round(avg);
+}
+
 function renderBrief(name, company, title, sections) {
+  const accuracy = calcAccuracy(sections);
+  const accuracyColor = accuracy >= 70 ? 'var(--accent)' : accuracy >= 40 ? '#ffb400' : 'var(--danger)';
+
   const html = sections.map(s => {
+    if (s.omitted) {
+      return `
+        <div class="section">
+          <div class="section-header">
+            <div class="section-label">${s.title}</div>
+            <span class="conf-badge conf-low">OMITTED</span>
+          </div>
+          <div class="omitted-notice"><strong>No verified data found.</strong> ${s.omittedReason || 'Insufficient sourced information to include this section.'}</div>
+        </div>`;
+    }
+
     const confClass = `conf-${s.confidence}`;
     const noteHtml = s.confidenceNote ? `<div class="conf-note">⚠ ${s.confidenceNote}</div>` : '';
+
+    const sourcesHtml = s.sources && s.sources.length ? `
+      <div class="sources-list">
+        <div class="sources-label">Sources</div>
+        ${s.sources.map(src => `
+          <div class="source-link">
+            ${src.url ? `<a href="${src.url}" target="_blank" rel="noopener">${src.label}</a>` : `<span style="color:#666">${src.label}</span>`}
+            ${src.snippet ? `<span class="source-snippet">${src.snippet}</span>` : ''}
+          </div>`).join('')}
+      </div>` : '';
+
+    const safeContent = (s.content || '').replace(/\\/g,'\\\\').replace(/`/g,'\\`');
+
     return `
       <div class="section">
         <div class="section-header">
           <div class="section-label">${s.title}</div>
           <span class="conf-badge ${confClass}">${s.confidence.toUpperCase()}</span>
-          <button class="copy-btn" onclick="copyText(this,\`${s.content.replace(/\\/g,'\\\\').replace(/`/g,'\\`')}\`)">Copy</button>
+          <button class="copy-btn" onclick="copyText(this,\`${safeContent}\`)">Copy</button>
         </div>
         ${noteHtml}
-        <div class="section-content">${formatContent(s.content)}</div>
+        <div class="section-content">${formatContent(s.content || '')}</div>
+        ${sourcesHtml}
       </div>`;
   }).join('');
 
@@ -447,17 +600,26 @@ function renderBrief(name, company, title, sections) {
       <div class="brief-header">
         <div class="prospect-name">${name.split(' ')[0]} <span>${name.split(' ').slice(1).join(' ')}</span></div>
         <div class="company-name">${title ? title + ' · ' : ''}${company} <span class="source-tag">Perplexity</span></div>
-      </div>${html}
+      </div>
+      <div class="accuracy-bar">
+        <div class="accuracy-label">Brief Confidence</div>
+        <div class="accuracy-track"><div class="accuracy-fill" style="width:${accuracy}%;background:${accuracyColor}"></div></div>
+        <div class="accuracy-pct" style="color:${accuracyColor}">${accuracy}%</div>
+      </div>
+      ${html}
     </div>`;
 }
 
 function renderOutreach(outreach) {
   if (!outreach) return;
-  const { emailSubject, emailBody, linkedin } = outreach;
+  const { emailSubject, emailBody, linkedin, personalizationScore, personalizationNote } = outreach;
+  const scoreColor = personalizationScore >= 7 ? 'var(--accent)' : personalizationScore >= 4 ? '#ffb400' : 'var(--danger)';
+
   document.getElementById('outreachPanel').innerHTML = `
     <div class="outreach-block">
+      ${personalizationNote ? `<div style="font-size:0.65rem;color:${scoreColor};line-height:1.5;padding:0.4rem 0.6rem;background:rgba(255,255,255,0.02);border-left:2px solid ${scoreColor}">Personalization ${personalizationScore}/10 — ${personalizationNote}</div>` : ''}
       <div class="outreach-item">
-        <div class="outreach-item-label">Cold Email</div>
+        <div class="outreach-item-label">Cold Email · ${selectedTone}</div>
         <div class="outreach-item-subject">Subject: ${emailSubject || ''}</div>
         <div class="outreach-item-content">${(emailBody || '').replace(/\n/g, '<br>')}</div>
         <div class="outreach-item-footer">
@@ -465,7 +627,7 @@ function renderOutreach(outreach) {
         </div>
       </div>
       <div class="outreach-item">
-        <div class="outreach-item-label">LinkedIn Message</div>
+        <div class="outreach-item-label">LinkedIn Message · ${selectedTone}</div>
         <div class="outreach-item-content">${linkedin || ''}</div>
         <div class="outreach-item-footer">
           <button class="copy-btn" onclick="copyText(this,\`${(linkedin||'').replace(/`/g,'\\`')}\`)">Copy</button>
