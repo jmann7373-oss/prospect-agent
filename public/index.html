@@ -283,6 +283,51 @@ CRITICAL RULES you must follow without exception:
   };
 }
 
+async function callExa(queries) {
+  // queries: array of { query, category? } e.g. [{ query: 'Adaptive Security startup crunchbase' }]
+  const results = await Promise.all(queries.map(async ({ query, category }) => {
+    const body = {
+      query,
+      numResults: 5,
+      useAutoprompt: true,
+      type: 'neural',
+      contents: { text: { maxCharacters: 2000 } }
+    };
+    if (category) body.category = category; // e.g. 'company', 'news'
+    const response = await fetch('/api/exa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await response.json();
+    if (!response.ok) return { query, results: [] };
+    return { query, results: data.results || [] };
+  }));
+
+  // Flatten into content + citations format matching Perplexity output
+  let content = '';
+  const citations = [];
+  for (const { query, results: hits } of results) {
+    if (!hits.length) continue;
+    content += `\n=== Exa: "${query}" ===\n`;
+    for (const hit of hits) {
+      content += `SOURCE: ${hit.url}\nTITLE: ${hit.title}\n${hit.text || ''}\n\n`;
+      citations.push(hit.url);
+    }
+  }
+  return { content: content.trim(), citations };
+}
+
+function isResearchThin(companyResult) {
+  const text = companyResult.content.toLowerCase();
+  // Thin if: lots of "no verified" / "not found" phrases, very short, or few citations
+  const noDataPhrases = (text.match(/no verified|not found|unable to find|no information|could not find|no credible/g) || []).length;
+  const totalLength = text.length;
+  const citationCount = companyResult.citations.length;
+  // Consider thin if 2+ "not found" phrases, or very short content, or zero citations
+  return noDataPhrases >= 2 || totalLength < 400 || citationCount === 0;
+}
+
 async function callAnthropic(prompt) {
   const response = await fetch('/api/research', {
     method: 'POST',
@@ -296,6 +341,11 @@ async function callAnthropic(prompt) {
   const data = await response.json();
   if (!response.ok) throw new Error(data.error?.message || 'Anthropic request failed');
   return data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
+}
+
+function updateLoadingLabel(index, text) {
+  const steps = document.querySelectorAll('.loading-step');
+  if (steps[index]) steps[index].textContent = text;
 }
 
 function setLoadingStep(active) {
@@ -372,28 +422,88 @@ Return this JSON:
       } catch { /* fall through to defaults */ }
     }
 
-    // STEP 2: Company research — armed with LinkedIn-extracted context
+    // STEP 2: Company research — three parallel searches, merged
     setLoadingStep(2);
-    const companyPrompt = `Find verified, sourced information about the company "${companyContext.companyName || company}".
+    const cName = companyContext.companyName || company;
+    const cIndustry = companyContext.industry || '';
+    const cInvestors = companyContext.additionalContext || '';
 
-${companyContext.companyDescription ? `CONTEXT FROM PROSPECT'S LINKEDIN (use this to focus your search):\n- What they do: ${companyContext.companyDescription}\n- Industry: ${companyContext.industry || 'unknown'}\n- Size: ${companyContext.companySize || 'unknown'}\n- Additional: ${companyContext.additionalContext || 'none'}\n` : ''}
+    // Build search hints from everything we know
+    const searchHints = [cIndustry, cInvestors].filter(Boolean).join(', ');
 
-Search for and report ONLY facts you can source. For each claim, note the source.
+    const companyPrompt1 = `Search for the company "${cName}"${searchHints ? ` (context: ${searchHints})` : ''}.
 
-Look for:
-1. What ${companyContext.companyName || company} does — their product/service, target customers, value proposition (cite website or press)
-2. Company size — employee count with source and date (LinkedIn, Crunchbase, etc.)
-3. Funding history — each round: amount, date, round type, lead investors. Source required for each.
-4. Recent news — any press releases, product launches, partnerships, leadership changes in the last 6 months. Cite each item.
-5. Current job openings — which departments are hiring? Cite the job board or LinkedIn.
-6. Known tech stack — tools or platforms they use publicly (from job postings, case studies, integrations page)
-7. Key competitors — who they compete with directly
+Try multiple search angles if needed: "${cName} startup", "${cName} company", "${cName} funding", "${cName} crunchbase", "${cName} techcrunch". This may be a small or recently founded company — be persistent.
 
-FOR EACH CLAIM: state the source and date.
-If you cannot find verified data for a section, state: "No verified information found for [topic]."
-Do NOT fabricate funding amounts, headcount, or product details.`;
+${companyContext.companyDescription ? `WHAT WE ALREADY KNOW (from prospect's LinkedIn — use to disambiguate if multiple companies share the name):\n${companyContext.companyDescription}\n` : ''}
 
-    const companyResult = await callPerplexity(companyPrompt);
+Report what you find on:
+- What the company does, their product/service, target customers
+- Website URL if found
+- Company size / headcount
+- When they were founded
+
+For each fact, cite the source URL and date. If you truly cannot find anything, say so explicitly.`;
+
+    const companyPrompt2 = `Search for funding and financial news about "${cName}"${searchHints ? ` (${searchHints})` : ''}.
+
+Try: "${cName} funding round", "${cName} raises", "${cName} series A", "${cName} investors", "${cName} valuation", site:crunchbase.com "${cName}", site:techcrunch.com "${cName}".
+
+${companyContext.additionalContext ? `Known investor context: ${companyContext.additionalContext}` : ''}
+
+Report:
+- Each funding round: amount raised, date, round type (seed/A/B etc.), named investors
+- Total funding raised if known
+- Any acquisitions or notable financial events
+
+Cite source URL and date for every data point. If nothing found after trying multiple searches, say so.`;
+
+    const companyPrompt3 = `Search for recent news, hiring activity, and tech stack for "${cName}"${searchHints ? ` (${searchHints})` : ''}.
+
+Try: "${cName} jobs", "${cName} hiring", "${cName} news 2024", "${cName} news 2025", "${cName} press release", "${cName} partnership", "${cName} launch".
+
+Report:
+- Any news or announcements from the last 12 months (product launches, partnerships, leadership hires, expansions)
+- Current open roles or hiring trends (cite job board URL)
+- Any mentions of their tech stack, tools, or integrations
+- Key competitors mentioned in coverage
+
+Cite source URL and date for every item.`;
+
+    // Run all three in parallel
+    const [companyResult1, companyResult2, companyResult3] = await Promise.all([
+      callPerplexity(companyPrompt1),
+      callPerplexity(companyPrompt2),
+      callPerplexity(companyPrompt3)
+    ]);
+
+    let companyResult = {
+      content: `=== SEARCH 1: Overview ===\n${companyResult1.content}\n\n=== SEARCH 2: Funding ===\n${companyResult2.content}\n\n=== SEARCH 3: News & Hiring ===\n${companyResult3.content}`,
+      citations: [...companyResult1.citations, ...companyResult2.citations, ...companyResult3.citations]
+    };
+
+    // Exa fallback: if Perplexity came back thin, fire targeted Exa searches
+    if (isResearchThin(companyResult)) {
+      updateLoadingLabel(2, `③ Perplexity thin — firing Exa fallback for ${cName}...`);
+      try {
+        const exaResult = await callExa([
+          { query: `${cName} company overview funding`, category: 'company' },
+          { query: `${cName} startup crunchbase funding round investors` },
+          { query: `${cName} ${cIndustry} news announcement 2025`, category: 'news' },
+          { query: `site:crunchbase.com ${cName}` },
+          { query: `site:techcrunch.com ${cName}` }
+        ]);
+        if (exaResult.content) {
+          companyResult = {
+            content: companyResult.content + `\n\n=== EXA FALLBACK ===\n${exaResult.content}`,
+            citations: [...companyResult.citations, ...exaResult.citations]
+          };
+        }
+      } catch (exaErr) {
+        console.warn('Exa fallback failed:', exaErr.message);
+        // Non-fatal — continue with Perplexity results
+      }
+    }
 
     // STEP 3: Structure, score confidence strictly, extract sources
     setLoadingStep(3);
@@ -564,7 +674,7 @@ function showLoading(name, company) {
       <div class="loading-steps">
         <div class="loading-step active">① Sourcing ${name}...</div>
         <div class="loading-step">② Extracting company from LinkedIn...</div>
-        <div class="loading-step">③ Searching ${company}...</div>
+        <div class="loading-step">③ Running 3x Perplexity + Exa fallback on ${company}...</div>
         <div class="loading-step">④ Verifying & scoring confidence...</div>
         <div class="loading-step">⑤ Drafting ${selectedTone} outreach...</div>
       </div>
