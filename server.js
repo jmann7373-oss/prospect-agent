@@ -1,11 +1,10 @@
 const express = require('express');
 const path = require('path');
-const nodemailer = require('nodemailer');
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Proxy to Anthropic (research + structuring)
+// Proxy to Anthropic (outreach generation)
 app.post('/api/research', async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'Anthropic API key not configured.' });
@@ -56,35 +55,46 @@ app.post('/api/exa', async (req, res) => {
   }
 });
 
-// Send email via Gmail SMTP
+// Send email via Resend
 app.post('/api/send-email', async (req, res) => {
-  const { to, subject, body } = req.body;
-  const gmailUser = process.env.GMAIL_USER;
-  const gmailPass = process.env.GMAIL_APP_PASSWORD;
-
-  if (!gmailUser || !gmailPass) {
-    return res.status(500).json({ error: 'Gmail credentials not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD in your .env file.' });
+  const { to, subject, html } = req.body;
+  const apiKey = process.env.RESEND_API_KEY;
+  
+  if (!apiKey) {
+    console.error("RESEND ERROR: API key not configured");
+    return res.status(500).json({ error: 'Resend API key not configured.' });
   }
-  if (!to || !subject || !body) {
-    return res.status(400).json({ error: 'Missing required fields: to, subject, body.' });
+  
+  if (!to || !subject || !html) {
+    return res.status(400).json({ error: 'Missing required fields: to, subject, html' });
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: gmailUser, pass: gmailPass }
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        from: 'onboarding@resend.dev', // Resend sandbox sender
+        to: to,
+        subject: subject,
+        html: html
+      })
     });
 
-    await transporter.sendMail({
-      from: gmailUser,
-      to,
-      subject,
-      text: body
-    });
+    const data = await response.json();
 
-    res.json({ success: true, message: `Email sent to ${to}` });
+    if (!response.ok) {
+      console.error("RESEND ERROR:", data);
+      return res.status(response.status).json({ error: data.message || 'Failed to send email' });
+    }
+
+    res.status(200).json({ success: true, messageId: data.id });
   } catch (err) {
-    res.status(500).json({ error: `Failed to send email: ${err.message}` });
+    console.error("RESEND REQUEST ERROR:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
