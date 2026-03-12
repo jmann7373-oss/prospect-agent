@@ -8,222 +8,376 @@
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
 
   :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --border: #1e1e1e;
-    --accent: #c8f55a;
-    --text: #f0f0f0;
-    --muted: #666;
-    --danger: #ff4f4f;
+    --bg: #0a0a0a; --surface: #111; --border: #1e1e1e;
+    --accent: #c8f55a; --text: #f0f0f0; --muted: #666; --danger: #ff4f4f;
+    --warn: #ffb400;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; display: flex; flex-direction: column; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  header {
-    padding: 1.5rem 2.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.03em; }
+  /* HEADER */
+  header { padding: 1.2rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em; }
   .logo span { color: var(--accent); }
-  .badge { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; border: 1px solid var(--border); padding: 0.3rem 0.6rem; border-radius: 2px; }
+  .badge { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; border: 1px solid var(--border); padding: 0.25rem 0.5rem; border-radius: 2px; }
 
-  .app { flex: 1; display: grid; grid-template-columns: 290px 1fr 300px; min-height: calc(100vh - 70px); }
+  /* TABS */
+  .tabs { display: flex; border-bottom: 1px solid var(--border); }
+  .tab { font-family: 'Syne', sans-serif; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.85rem 1.5rem; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
+  /* LAYOUT */
+  .tab-content { display: none; flex: 1; }
+  .tab-content.active { display: flex; }
+
+  /* SINGLE TAB - existing layout */
+  .app-single { flex: 1; display: grid; grid-template-columns: 290px 1fr 300px; min-height: calc(100vh - 110px); }
   .sidebar { border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; overflow-y: auto; }
   .sidebar-title { font-family: 'Syne', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
   .field { display: flex; flex-direction: column; gap: 0.4rem; }
   label { font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-
-  input, textarea, select {
-    background: var(--surface); border: 1px solid var(--border); color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 0.8rem; padding: 0.6rem 0.8rem;
-    border-radius: 4px; outline: none; transition: border-color 0.2s; width: 100%;
-  }
+  input, textarea, select { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.8rem; padding: 0.6rem 0.8rem; border-radius: 4px; outline: none; transition: border-color 0.2s; width: 100%; }
   input:focus, textarea:focus, select:focus { border-color: var(--accent); }
   textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
   select option { background: #1a1a1a; }
-
   .run-btn { background: var(--accent); color: #000; border: none; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.05em; padding: 0.9rem; border-radius: 4px; cursor: pointer; width: 100%; transition: opacity 0.2s, transform 0.1s; margin-top: auto; }
   .run-btn:hover { opacity: 0.9; }
   .run-btn:active { transform: scale(0.99); }
   .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
   .output-panel { padding: 2rem 2.5rem; overflow-y: auto; border-right: 1px solid var(--border); }
-
-  .empty-state { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: var(--muted); text-align: center; }
-  .empty-icon { font-size: 3rem; opacity: 0.2; }
-  .empty-state p { font-size: 0.78rem; line-height: 1.7; max-width: 260px; }
-
-  .brief { display: flex; flex-direction: column; gap: 2rem; max-width: 700px; }
-  .brief-header { border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; }
-  .brief-header .prospect-name { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
-  .brief-header .prospect-name span { color: var(--accent); }
-  .brief-header .company-name { font-size: 0.82rem; color: var(--muted); margin-top: 0.3rem; }
-
-  .section { display: flex; flex-direction: column; gap: 0.6rem; }
-  .section-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-  .section-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 0; }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .section-content { font-size: 0.8rem; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
-
-  .conf-badge { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 2px; font-weight: 700; flex-shrink: 0; }
-  .conf-high { background: rgba(200,245,90,0.12); border: 1px solid rgba(200,245,90,0.3); color: var(--accent); }
-  .conf-medium { background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.3); color: #ffb400; }
-  .conf-low { background: rgba(255,79,79,0.1); border: 1px solid rgba(255,79,79,0.3); color: var(--danger); }
-  .conf-note { font-size: 0.68rem; color: var(--muted); font-style: italic; padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--border); margin-top: 0.2rem; }
-
-  /* Sources */
-  .sources-list { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
-  .sources-label { font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem; }
-  .source-link { font-size: 0.65rem; color: #555; display: flex; align-items: baseline; gap: 0.4rem; line-height: 1.4; }
-  .source-link::before { content: '→'; color: var(--accent); flex-shrink: 0; font-size: 0.6rem; }
-  .source-link a { color: #888; text-decoration: none; word-break: break-all; }
-  .source-link a:hover { color: var(--accent); }
-  .source-snippet { color: #444; font-size: 0.6rem; margin-left: 0.9rem; display: block; line-height: 1.4; }
-
-  /* Omitted notice */
-  .omitted-notice { background: rgba(255,79,79,0.05); border: 1px solid rgba(255,79,79,0.15); border-radius: 4px; padding: 0.5rem 0.7rem; font-size: 0.67rem; color: #884444; line-height: 1.5; margin-top: 0.3rem; }
-  .omitted-notice strong { color: var(--danger); }
-
-  .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1.5rem; color: var(--muted); }
-  .loader { width: 40px; height: 40px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 0.75rem; animation: pulse 1.5s ease-in-out infinite; }
-  .loading-steps { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
-  .loading-step { font-size: 0.68rem; color: var(--muted); }
-  .loading-step.active { color: var(--accent); }
-  .loading-step.done { color: #555; text-decoration: line-through; }
-  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-
-  .error-msg { background: rgba(255,79,79,0.08); border: 1px solid rgba(255,79,79,0.3); color: var(--danger); padding: 1rem; border-radius: 4px; font-size: 0.78rem; line-height: 1.6; }
-
-  .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-
   .right-panel { overflow-y: auto; display: flex; flex-direction: column; }
   .panel-section { border-bottom: 1px solid var(--border); padding: 1.5rem; }
   .panel-section-title { font-family: 'Syne', sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
 
+  /* BATCH TAB */
+  .app-batch { flex: 1; display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 110px); }
+  .batch-sidebar { border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; overflow-y: auto; }
+  .batch-main { overflow-y: auto; padding: 2rem; }
+
+  /* Upload zone */
+  .upload-zone { border: 2px dashed var(--border); border-radius: 6px; padding: 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s; position: relative; }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); }
+  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 1.8rem; opacity: 0.3; margin-bottom: 0.5rem; }
+  .upload-label { font-size: 0.72rem; color: var(--muted); line-height: 1.6; }
+  .upload-label strong { color: var(--text); }
+
+  /* ICP config */
+  .icp-row { display: flex; align-items: center; gap: 0.6rem; }
+  .icp-row label { white-space: nowrap; flex-shrink: 0; }
+  .threshold-row { display: flex; align-items: center; gap: 0.8rem; }
+  .threshold-val { font-size: 0.9rem; color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; min-width: 28px; }
+  input[type=range] { accent-color: var(--accent); }
+
+  /* Prospect table */
+  .prospect-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+  .prospect-table th { font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .prospect-table td { padding: 0.65rem 0.8rem; border-bottom: 1px solid #161616; vertical-align: middle; }
+  .prospect-table tr:hover td { background: rgba(255,255,255,0.01); }
+  .score-bar { height: 3px; background: var(--border); border-radius: 2px; width: 60px; display: inline-block; vertical-align: middle; margin-right: 0.4rem; }
+  .score-fill { height: 100%; border-radius: 2px; }
+  .score-num { font-size: 0.68rem; color: var(--muted); }
+  .status-badge { font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.18rem 0.45rem; border-radius: 2px; font-weight: 700; }
+  .status-pending { background: rgba(255,255,255,0.04); color: #444; border: 1px solid #222; }
+  .status-queued { background: rgba(255,180,0,0.1); color: var(--warn); border: 1px solid rgba(255,180,0,0.3); }
+  .status-running { background: rgba(200,245,90,0.08); color: var(--accent); border: 1px solid rgba(200,245,90,0.2); }
+  .status-done { background: rgba(200,245,90,0.12); color: var(--accent); border: 1px solid rgba(200,245,90,0.3); }
+  .status-sent { background: rgba(100,200,100,0.1); color: #6dc86d; border: 1px solid rgba(100,200,100,0.3); }
+  .status-below { background: rgba(255,79,79,0.08); color: #884444; border: 1px solid rgba(255,79,79,0.15); }
+  .approve-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.58rem; padding: 0.2rem 0.55rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+  .approve-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .approve-btn.approved { background: rgba(200,245,90,0.1); border-color: var(--accent); color: var(--accent); }
+  .view-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.58rem; padding: 0.2rem 0.55rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+  .view-btn:hover { border-color: #444; color: var(--text); }
+
+  /* Pipeline progress */
+  .pipeline-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+  .pipeline-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .pipeline-meta { font-size: 0.68rem; color: var(--muted); }
+  .batch-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .batch-btn { background: var(--accent); color: #000; border: none; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.72rem; padding: 0.6rem 1.1rem; border-radius: 4px; cursor: pointer; transition: opacity 0.2s; }
+  .batch-btn:hover { opacity: 0.85; }
+  .batch-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .batch-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 400; }
+  .batch-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .empty-batch { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; gap: 1rem; color: var(--muted); text-align: center; }
+  .empty-batch .empty-icon { font-size: 2.5rem; opacity: 0.15; }
+  .empty-batch p { font-size: 0.75rem; line-height: 1.7; max-width: 280px; }
+
+  /* Prospect drawer */
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; }
+  .drawer-overlay.open { display: block; }
+  .drawer { position: fixed; right: 0; top: 0; bottom: 0; width: 680px; background: var(--bg); border-left: 1px solid var(--border); z-index: 101; overflow-y: auto; transform: translateX(100%); transition: transform 0.25s ease; display: flex; flex-direction: column; }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; position: sticky; top: 0; background: var(--bg); z-index: 1; }
+  .drawer-name { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; }
+  .drawer-meta { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+  .drawer-close { background: none; border: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; width: 28px; height: 28px; border-radius: 3px; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+  .drawer-close:hover { border-color: var(--danger); color: var(--danger); }
+  .drawer-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; gap: 1.5rem; }
+  .drawer-section-title { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+  .send-row { display: flex; gap: 0.6rem; align-items: flex-start; }
+  .send-input { flex: 1; }
+  .send-btn { background: var(--accent); color: #000; border: none; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.72rem; padding: 0.6rem 1rem; border-radius: 4px; cursor: pointer; white-space: nowrap; transition: opacity 0.2s; }
+  .send-btn:hover { opacity: 0.85; }
+  .send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .editable-email { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.9rem; font-size: 0.75rem; line-height: 1.7; color: #ccc; white-space: pre-wrap; outline: none; min-height: 120px; }
+  .editable-email:focus { border-color: var(--accent); }
+  .critic-block { background: rgba(255,180,0,0.05); border: 1px solid rgba(255,180,0,0.2); border-radius: 4px; padding: 0.8rem; }
+  .critic-label { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--warn); margin-bottom: 0.4rem; }
+  .critic-text { font-size: 0.7rem; color: #aaa; line-height: 1.6; }
+  .sent-confirm { background: rgba(100,200,100,0.08); border: 1px solid rgba(100,200,100,0.2); border-radius: 4px; padding: 0.8rem; font-size: 0.72rem; color: #6dc86d; line-height: 1.5; }
+
+  /* Shared brief styles */
+  .empty-state { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: var(--muted); text-align: center; }
+  .empty-icon { font-size: 3rem; opacity: 0.2; }
+  .empty-state p { font-size: 0.78rem; line-height: 1.7; max-width: 260px; }
+  .brief { display: flex; flex-direction: column; gap: 1.5rem; }
+  .brief-header { border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+  .brief-header .prospect-name { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+  .brief-header .prospect-name span { color: var(--accent); }
+  .brief-header .company-name { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+  .section { display: flex; flex-direction: column; gap: 0.5rem; }
+  .section-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .section-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 0; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section-content { font-size: 0.76rem; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
+  .conf-badge { font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.18rem 0.45rem; border-radius: 2px; font-weight: 700; flex-shrink: 0; }
+  .conf-high { background: rgba(200,245,90,0.12); border: 1px solid rgba(200,245,90,0.3); color: var(--accent); }
+  .conf-medium { background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.3); color: var(--warn); }
+  .conf-low { background: rgba(255,79,79,0.1); border: 1px solid rgba(255,79,79,0.3); color: var(--danger); }
+  .conf-note { font-size: 0.66rem; color: var(--muted); font-style: italic; padding: 0.35rem 0.6rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--border); }
+  .sources-list { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid var(--border); }
+  .sources-label { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem; }
+  .source-link { font-size: 0.62rem; color: #555; display: flex; align-items: baseline; gap: 0.4rem; line-height: 1.4; }
+  .source-link::before { content: '→'; color: var(--accent); flex-shrink: 0; font-size: 0.58rem; }
+  .source-link a { color: #777; text-decoration: none; word-break: break-all; }
+  .source-link a:hover { color: var(--accent); }
+  .source-snippet { color: #444; font-size: 0.58rem; margin-left: 0.9rem; display: block; line-height: 1.4; }
+  .omitted-notice { background: rgba(255,79,79,0.05); border: 1px solid rgba(255,79,79,0.15); border-radius: 4px; padding: 0.5rem 0.7rem; font-size: 0.65rem; color: #884444; line-height: 1.5; }
+  .omitted-notice strong { color: var(--danger); }
+  .accuracy-bar { display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 0.8rem; background: rgba(200,245,90,0.04); border: 1px solid rgba(200,245,90,0.1); border-radius: 4px; }
+  .accuracy-label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .accuracy-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; }
+  .accuracy-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+  .accuracy-pct { font-size: 0.68rem; font-weight: 500; white-space: nowrap; }
+  .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1.5rem; color: var(--muted); }
+  .loader { width: 36px; height: 36px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 0.72rem; animation: pulse 1.5s ease-in-out infinite; }
+  .loading-steps { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem; }
+  .loading-step { font-size: 0.65rem; color: var(--muted); }
+  .loading-step.active { color: var(--accent); }
+  .loading-step.done { color: #444; text-decoration: line-through; }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .error-msg { background: rgba(255,79,79,0.08); border: 1px solid rgba(255,79,79,0.3); color: var(--danger); padding: 1rem; border-radius: 4px; font-size: 0.76rem; line-height: 1.6; }
+  .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.22rem 0.55rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
   .outreach-empty { font-size: 0.72rem; color: var(--muted); line-height: 1.6; }
   .outreach-block { display: flex; flex-direction: column; gap: 1rem; }
   .outreach-item { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.9rem; }
-  .outreach-item-label { font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
-  .outreach-item-content { font-size: 0.75rem; line-height: 1.7; color: #ccc; }
-  .outreach-item-subject { font-size: 0.72rem; color: var(--text); margin-bottom: 0.5rem; font-weight: 500; }
-  .outreach-item-footer { display: flex; justify-content: flex-end; margin-top: 0.6rem; }
-
+  .outreach-item-label { font-size: 0.56rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .outreach-item-content { font-size: 0.73rem; line-height: 1.7; color: #ccc; }
+  .outreach-item-subject { font-size: 0.7rem; color: var(--text); margin-bottom: 0.5rem; font-weight: 500; }
+  .outreach-item-footer { display: flex; justify-content: flex-end; margin-top: 0.6rem; gap: 0.4rem; }
   .tone-selector { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-  .tone-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.6rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
+  .tone-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.28rem 0.55rem; border-radius: 3px; cursor: pointer; transition: all 0.2s; }
   .tone-btn:hover { border-color: #444; color: var(--text); }
   .tone-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,245,90,0.06); }
-
   .history-list { display: flex; flex-direction: column; gap: 0.5rem; }
   .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.7rem 0.9rem; cursor: pointer; transition: border-color 0.2s; }
   .history-item:hover { border-color: var(--accent); }
-  .history-item-name { font-size: 0.78rem; color: var(--text); font-family: 'Syne', sans-serif; font-weight: 600; }
-  .history-item-meta { font-size: 0.63rem; color: var(--muted); margin-top: 0.2rem; }
-  .history-empty { font-size: 0.72rem; color: var(--muted); line-height: 1.6; }
-  .outreach-loading { font-size: 0.72rem; color: var(--muted); animation: pulse 1.5s ease-in-out infinite; padding: 0.5rem 0; }
-  .source-tag { display: inline-block; font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(200,245,90,0.08); border: 1px solid rgba(200,245,90,0.2); color: var(--accent); padding: 0.15rem 0.4rem; border-radius: 2px; margin-left: 0.5rem; vertical-align: middle; }
+  .history-item-name { font-size: 0.76rem; color: var(--text); font-family: 'Syne', sans-serif; font-weight: 600; }
+  .history-item-meta { font-size: 0.61rem; color: var(--muted); margin-top: 0.2rem; }
+  .history-empty { font-size: 0.7rem; color: var(--muted); line-height: 1.6; }
+  .source-tag { display: inline-block; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(200,245,90,0.08); border: 1px solid rgba(200,245,90,0.2); color: var(--accent); padding: 0.12rem 0.35rem; border-radius: 2px; margin-left: 0.4rem; vertical-align: middle; }
+  .outreach-loading { font-size: 0.7rem; color: var(--muted); animation: pulse 1.5s ease-in-out infinite; padding: 0.5rem 0; }
 
-  /* Accuracy bar */
-  .accuracy-bar { display: flex; align-items: center; gap: 0.8rem; padding: 0.75rem 1rem; background: rgba(200,245,90,0.04); border: 1px solid rgba(200,245,90,0.1); border-radius: 4px; margin-bottom: 1.5rem; }
-  .accuracy-label { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-  .accuracy-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
-  .accuracy-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.6s ease; }
-  .accuracy-pct { font-size: 0.7rem; color: var(--accent); font-weight: 500; white-space: nowrap; }
+  /* Critic iterations */
+  .critic-iterations { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.5rem; }
+  .critic-iter { font-size: 0.62rem; color: #555; padding: 0.3rem 0.5rem; border-left: 2px solid #222; }
+  .critic-iter.pass { border-left-color: var(--accent); color: #666; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">prospect<span>.</span>agent</div>
-  <div class="badge">BDR Research Tool v2</div>
+  <div class="badge">v3 · Multi-Agent</div>
 </header>
 
-<div class="app">
-  <aside class="sidebar">
-    <div class="sidebar-title">Prospect Info</div>
-    <div class="field"><label>Prospect Full Name</label><input type="text" id="prospectName" placeholder="e.g. Sarah Chen" /></div>
-    <div class="field"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. Acme Corp" /></div>
-    <div class="field"><label>Job Title</label><input type="text" id="jobTitle" placeholder="e.g. VP of Sales" /></div>
-    <div class="field">
-      <label>LinkedIn Profile Text <span style="color:#444;font-size:0.58rem;text-transform:none;letter-spacing:0">(paste from profile page)</span></label>
-      <textarea id="linkedinText" placeholder="Open their LinkedIn profile → select all text → paste here. This gives the agent direct access to their experience, posts, and bio." style="min-height:100px"></textarea>
-      <div style="font-size:0.6rem;color:#444;line-height:1.5;margin-top:0.2rem">Tip: Ctrl+A on the profile page, then paste. LinkedIn URLs can't be crawled directly.</div>
-    </div>
-    <div class="field"><label>Your Product / Service</label><input type="text" id="yourProduct" placeholder="e.g. CRM software for sales teams" /></div>
-    <div class="field">
-      <label>Notes / Context (optional)</label>
-      <textarea id="extraContext" placeholder="Paste anything you already know — a LinkedIn post, news article, mutual connection..."></textarea>
-    </div>
-    <div class="field">
-      <label>Outreach Tone</label>
-      <div class="tone-selector">
-        <button class="tone-btn active" data-tone="direct" onclick="selectTone(this)">Direct</button>
-        <button class="tone-btn" data-tone="formal" onclick="selectTone(this)">Formal</button>
-        <button class="tone-btn" data-tone="casual" onclick="selectTone(this)">Casual</button>
-        <button class="tone-btn" data-tone="witty" onclick="selectTone(this)">Witty</button>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('single')">Single Prospect</button>
+  <button class="tab" onclick="switchTab('batch')">Batch Pipeline</button>
+</div>
+
+<!-- SINGLE TAB -->
+<div class="tab-content active" id="tab-single">
+  <div class="app-single">
+    <aside class="sidebar">
+      <div class="sidebar-title">Prospect Info</div>
+      <div class="field"><label>Prospect Full Name</label><input type="text" id="prospectName" placeholder="e.g. Sarah Chen" /></div>
+      <div class="field"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. Acme Corp" /></div>
+      <div class="field"><label>Job Title</label><input type="text" id="jobTitle" placeholder="e.g. VP of Sales" /></div>
+      <div class="field"><label>Prospect Email (for sending)</label><input type="email" id="prospectEmail" placeholder="sarah@acmecorp.com" /></div>
+      <div class="field">
+        <label>LinkedIn Profile Text <span style="color:#444;font-size:0.58rem;text-transform:none;letter-spacing:0">(paste from profile)</span></label>
+        <textarea id="linkedinText" placeholder="Open their LinkedIn → select all → paste here." style="min-height:90px"></textarea>
+        <div style="font-size:0.58rem;color:#444;line-height:1.5;margin-top:0.2rem">Tip: Ctrl+A on profile page, then paste.</div>
       </div>
-    </div>
-    <button class="run-btn" id="runBtn" onclick="runAgent()">Run Research Agent →</button>
-  </aside>
+      <div class="field"><label>Your Product / Service</label><input type="text" id="yourProduct" placeholder="e.g. CRM software for sales teams" /></div>
+      <div class="field"><label>Notes / Context (optional)</label><textarea id="extraContext" placeholder="Paste anything you already know..."></textarea></div>
+      <div class="field">
+        <label>Outreach Tone</label>
+        <div class="tone-selector">
+          <button class="tone-btn active" data-tone="direct" onclick="selectTone(this)">Direct</button>
+          <button class="tone-btn" data-tone="formal" onclick="selectTone(this)">Formal</button>
+          <button class="tone-btn" data-tone="casual" onclick="selectTone(this)">Casual</button>
+          <button class="tone-btn" data-tone="witty" onclick="selectTone(this)">Witty</button>
+        </div>
+      </div>
+      <button class="run-btn" id="runBtn" onclick="runSingleAgent()">Run Research Agent →</button>
+    </aside>
 
-  <section class="output-panel" id="outputPanel">
-    <div class="empty-state">
-      <div class="empty-icon">⬡</div>
-      <p>Enter a prospect's details and hit Run to generate your research brief.</p>
-    </div>
-  </section>
+    <section class="output-panel" id="outputPanel">
+      <div class="empty-state"><div class="empty-icon">⬡</div><p>Enter a prospect's details and hit Run to generate your research brief.</p></div>
+    </section>
 
-  <div class="right-panel">
-    <div class="panel-section">
-      <div class="panel-section-title">Outreach Drafts</div>
-      <div id="outreachPanel"><div class="outreach-empty">Research a prospect to generate a cold email and LinkedIn message.</div></div>
-    </div>
-    <div class="panel-section">
-      <div class="panel-section-title">Recent Prospects</div>
-      <div id="historyPanel"><div class="history-empty">No history yet.</div></div>
+    <div class="right-panel">
+      <div class="panel-section">
+        <div class="panel-section-title">Outreach Drafts</div>
+        <div id="outreachPanel"><div class="outreach-empty">Research a prospect to generate outreach.</div></div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section-title">Recent Prospects</div>
+        <div id="historyPanel"><div class="history-empty">No history yet.</div></div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- BATCH TAB -->
+<div class="tab-content" id="tab-batch">
+  <div class="app-batch">
+    <div class="batch-sidebar">
+      <div class="sidebar-title">Batch Config</div>
+
+      <div class="field">
+        <label>Upload CSV</label>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept=".csv" onchange="handleCSV(this)" />
+          <div class="upload-icon">⬆</div>
+          <div class="upload-label"><strong>Click or drag CSV</strong><br>Columns: name, company, title, email<br>(linkedin_text optional)</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Your Product / Service</label>
+        <input type="text" id="batchProduct" placeholder="e.g. CRM software for sales teams" />
+      </div>
+
+      <div class="field">
+        <label>ICP — Target Industries</label>
+        <input type="text" id="icpIndustries" placeholder="e.g. SaaS, Fintech, Healthcare" />
+      </div>
+
+      <div class="field">
+        <label>ICP — Target Titles / Seniority</label>
+        <input type="text" id="icpTitles" placeholder="e.g. VP Sales, Head of Growth, CRO" />
+      </div>
+
+      <div class="field">
+        <label>ICP — Company Size</label>
+        <input type="text" id="icpSize" placeholder="e.g. 50-500 employees, Series A-C" />
+      </div>
+
+      <div class="field">
+        <label>Score Threshold</label>
+        <div class="threshold-row">
+          <input type="range" min="1" max="10" value="6" id="scoreThreshold" oninput="document.getElementById('thresholdVal').textContent=this.value" style="flex:1" />
+          <div class="threshold-val" id="thresholdVal">6</div>
+          <span style="font-size:0.6rem;color:var(--muted)">/10</span>
+        </div>
+        <div style="font-size:0.6rem;color:#444;line-height:1.5">Only prospects scoring ≥ threshold get researched</div>
+      </div>
+
+      <div class="field">
+        <label>Outreach Tone</label>
+        <div class="tone-selector">
+          <button class="tone-btn active" data-tone="direct" onclick="selectBatchTone(this)">Direct</button>
+          <button class="tone-btn" data-tone="formal" onclick="selectBatchTone(this)">Formal</button>
+          <button class="tone-btn" data-tone="casual" onclick="selectBatchTone(this)">Casual</button>
+          <button class="tone-btn" data-tone="witty" onclick="selectBatchTone(this)">Witty</button>
+        </div>
+      </div>
+
+      <button class="run-btn" id="batchRunBtn" onclick="runBatchPipeline()" disabled>Run Pipeline →</button>
+    </div>
+
+    <div class="batch-main" id="batchMain">
+      <div class="empty-batch">
+        <div class="empty-icon">⬡</div>
+        <p>Upload a CSV to score and research your prospect list automatically.</p>
+        <p style="font-size:0.65rem;color:#444">Expected columns: name, company, title, email<br>Optional: linkedin_text</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROSPECT DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="prospectDrawer">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-name" id="drawerName">—</div>
+      <div class="drawer-meta" id="drawerMeta">—</div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <div style="color:var(--muted);font-size:0.75rem">Loading...</div>
+  </div>
+</div>
+
 <script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
 let selectedTone = 'direct';
+let selectedBatchTone = 'direct';
+let prospects = []; // batch prospect list
+let currentDrawerIndex = null;
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
 
 function selectTone(btn) {
-  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#tab-single .tone-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedTone = btn.dataset.tone;
 }
 
-function getHistory() {
-  try { return JSON.parse(localStorage.getItem('prospect_history_v2') || '[]'); } catch { return []; }
+function selectBatchTone(btn) {
+  document.querySelectorAll('#tab-batch .tone-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedBatchTone = btn.dataset.tone;
 }
 
+// ─── HISTORY ──────────────────────────────────────────────────────────────────
+function getHistory() { try { return JSON.parse(localStorage.getItem('prospect_history_v3') || '[]'); } catch { return []; } }
 function saveToHistory(entry) {
   const history = getHistory();
   const i = history.findIndex(h => h.name === entry.name && h.company === entry.company);
   if (i >= 0) history.splice(i, 1);
   history.unshift(entry);
   if (history.length > 20) history.pop();
-  localStorage.setItem('prospect_history_v2', JSON.stringify(history));
+  localStorage.setItem('prospect_history_v3', JSON.stringify(history));
   renderHistory();
 }
-
 function renderHistory() {
   const history = getHistory();
   const panel = document.getElementById('historyPanel');
@@ -235,548 +389,729 @@ function renderHistory() {
       <div class="history-item-meta">${new Date(h.timestamp).toLocaleDateString()}</div>
     </div>`).join('')}</div>`;
 }
-
 function loadFromHistory(index) {
   const entry = getHistory()[index];
   if (!entry) return;
   document.getElementById('prospectName').value = entry.name;
   document.getElementById('companyName').value = entry.company;
   document.getElementById('jobTitle').value = entry.title || '';
+  document.getElementById('prospectEmail').value = entry.email || '';
   document.getElementById('linkedinText').value = entry.linkedin || '';
   document.getElementById('yourProduct').value = entry.product || '';
   document.getElementById('extraContext').value = entry.extraContext || '';
-  if (entry.sections) renderBrief(entry.name, entry.company, entry.title, entry.sections);
-  if (entry.outreach) renderOutreach(entry.outreach);
+  if (entry.sections) renderBrief(entry.name, entry.company, entry.title, entry.sections, 'outputPanel');
+  if (entry.outreach) renderOutreach(entry.outreach, entry.email);
 }
 
+// ─── API CALLS ────────────────────────────────────────────────────────────────
 async function callPerplexity(prompt) {
   const response = await fetch('/api/perplexity', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'sonar',
-      messages: [
-        {
-          role: 'system',
-          content: `You are a meticulous sales research analyst with extremely high standards for factual accuracy.
-
-CRITICAL RULES you must follow without exception:
+      model: 'sonar', messages: [
+        { role: 'system', content: `You are a meticulous sales research analyst with extremely high standards for factual accuracy.
+CRITICAL RULES:
 1. NEVER invent, infer, or guess facts. If you do not have a verified source, omit the information entirely.
-2. Every specific claim (dates, amounts, titles, product names, headcount) MUST have a real source you can cite.
+2. Every specific claim MUST have a real source you can cite.
 3. For each piece of information, note the source URL or publication name and approximate date.
-4. If a section has insufficient verified data, say so explicitly rather than filling with vague generalities.
-5. Do NOT say things like "likely", "probably", or "may have" — either you know it with a source or you don't include it.
-6. Recency matters: prioritize information from the last 6 months. Flag anything older than 12 months.`
-        },
+4. If a section has insufficient verified data, say so explicitly.
+5. Do NOT say "likely", "probably", or "may have".
+6. Prioritize information from the last 6 months.` },
         { role: 'user', content: prompt }
-      ],
-      max_tokens: 2000,
-      search_recency_filter: 'month',
-      return_citations: true
+      ], max_tokens: 2000, search_recency_filter: 'month', return_citations: true
     })
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error?.message || 'Perplexity request failed');
-  return {
-    content: data.choices?.[0]?.message?.content || '',
-    citations: data.citations || []
-  };
+  return { content: data.choices?.[0]?.message?.content || '', citations: data.citations || [] };
 }
 
-async function callExa(queries) {
-  // queries: array of { query, category? } e.g. [{ query: 'Adaptive Security startup crunchbase' }]
-  const results = await Promise.all(queries.map(async ({ query, category }) => {
-    const body = {
-      query,
-      numResults: 5,
-      useAutoprompt: true,
-      type: 'neural',
-      contents: { text: { maxCharacters: 2000 } }
-    };
-    if (category) body.category = category; // e.g. 'company', 'news'
-    const response = await fetch('/api/exa', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    const data = await response.json();
-    if (!response.ok) return { query, results: [] };
-    return { query, results: data.results || [] };
-  }));
-
-  // Flatten into content + citations format matching Perplexity output
-  let content = '';
-  const citations = [];
-  for (const { query, results: hits } of results) {
-    if (!hits.length) continue;
-    content += `\n=== Exa: "${query}" ===\n`;
-    for (const hit of hits) {
-      content += `SOURCE: ${hit.url}\nTITLE: ${hit.title}\n${hit.text || ''}\n\n`;
-      citations.push(hit.url);
-    }
-  }
-  return { content: content.trim(), citations };
-}
-
-function isResearchThin(companyResult) {
-  const text = companyResult.content.toLowerCase();
-  // Thin if: lots of "no verified" / "not found" phrases, very short, or few citations
-  const noDataPhrases = (text.match(/no verified|not found|unable to find|no information|could not find|no credible/g) || []).length;
-  const totalLength = text.length;
-  const citationCount = companyResult.citations.length;
-  // Consider thin if 2+ "not found" phrases, or very short content, or zero citations
-  return noDataPhrases >= 2 || totalLength < 400 || citationCount === 0;
-}
-
-async function callAnthropic(prompt) {
+async function callAnthropic(prompt, maxTokens = 2000) {
   const response = await fetch('/api/research', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] })
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error?.message || 'Anthropic request failed');
   return data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
 }
 
-function updateLoadingLabel(index, text) {
-  const steps = document.querySelectorAll('.loading-step');
-  if (steps[index]) steps[index].textContent = text;
+async function callExa(queries) {
+  const results = await Promise.all(queries.map(async ({ query, category }) => {
+    const body = { query, numResults: 5, useAutoprompt: true, type: 'neural', contents: { text: { maxCharacters: 2000 } } };
+    if (category) body.category = category;
+    const response = await fetch('/api/exa', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await response.json();
+    if (!response.ok) return { query, results: [] };
+    return { query, results: data.results || [] };
+  }));
+  let content = ''; const citations = [];
+  for (const { query, results: hits } of results) {
+    if (!hits.length) continue;
+    content += `\n=== Exa: "${query}" ===\n`;
+    for (const hit of hits) { content += `SOURCE: ${hit.url}\nTITLE: ${hit.title}\n${hit.text || ''}\n\n`; citations.push(hit.url); }
+  }
+  return { content: content.trim(), citations };
 }
 
-function setLoadingStep(active) {
-  document.querySelectorAll('.loading-step').forEach((el, i) => {
+function isResearchThin(companyResult) {
+  const text = companyResult.content.toLowerCase();
+  const noDataPhrases = (text.match(/no verified|not found|unable to find|no information|could not find|no credible/g) || []).length;
+  return noDataPhrases >= 2 || text.length < 400 || companyResult.citations.length === 0;
+}
+
+// ─── SCORER AGENT ─────────────────────────────────────────────────────────────
+async function scoreProspect(prospect, icp) {
+  const prompt = `You are an ICP scoring agent. Score this prospect 1-10 based on fit with the ideal customer profile.
+
+ICP CRITERIA:
+- Target industries: ${icp.industries || 'any'}
+- Target titles/seniority: ${icp.titles || 'any'}
+- Target company size: ${icp.size || 'any'}
+
+PROSPECT:
+- Name: ${prospect.name}
+- Title: ${prospect.title || 'unknown'}
+- Company: ${prospect.company}
+
+Scoring rules:
+- 9-10: Perfect fit across all criteria
+- 7-8: Strong fit, matches most criteria
+- 5-6: Partial fit, matches some criteria
+- 3-4: Weak fit, limited match
+- 1-2: Poor fit, does not match criteria
+
+Return ONLY JSON:
+{
+  "score": 7,
+  "reasons": ["reason 1", "reason 2"],
+  "flags": ["any concern or mismatch"]
+}`;
+
+  try {
+    const text = await callAnthropic(prompt, 500);
+    return JSON.parse(text.replace(/```json|```/g, '').trim());
+  } catch {
+    return { score: 5, reasons: ['Could not score'], flags: [] };
+  }
+}
+
+// ─── RESEARCH PIPELINE (shared by single + batch) ──────────────────────────
+async function researchProspect(prospect, product, tone, onStep) {
+  const { name, company, title, linkedin = '', extraContext = '' } = prospect;
+  onStep(0);
+
+  // Person research
+  const personPrompt = `Find verified, sourced information about ${name}, ${title ? `"${title}"` : 'a professional'} at ${company}.
+${linkedin ? `\nLINKEDIN PROFILE TEXT (treat as ground truth):\n"""\n${linkedin.slice(0, 3000)}\n"""` : ''}
+${extraContext ? `\nAdditional context:\n${extraContext}` : ''}
+
+Report ONLY what you can find with real sources. For each fact, note the source.
+Look for: current role + tenure, career history, public content (posts/talks/articles), education, achievements.
+FOR EACH CLAIM: state source and date.
+If you cannot find verified info for a topic, say: "No verified information found for [topic]."`;
+
+  const personResult = await callPerplexity(personPrompt);
+
+  // Extract company context from LinkedIn
+  onStep(1);
+  let companyContext = { name: company };
+  if (linkedin) {
+    try {
+      const extracted = await callAnthropic(`Extract company info from this LinkedIn profile text. Return ONLY JSON.
+"""
+${linkedin.slice(0, 3000)}
+"""
+Return: { "companyName": "", "companyDescription": "", "companySize": "", "industry": "", "prospectTeam": "", "prospectResponsibilities": "", "additionalContext": "" }`, 600);
+      companyContext = { ...companyContext, ...JSON.parse(extracted.replace(/```json|```/g, '').trim()) };
+    } catch {}
+  }
+
+  // Company research — 3 parallel Perplexity searches
+  onStep(2);
+  const cName = companyContext.companyName || company;
+  const hints = [companyContext.industry, companyContext.additionalContext].filter(Boolean).join(', ');
+
+  const [r1, r2, r3] = await Promise.all([
+    callPerplexity(`Search for "${cName}"${hints ? ` (${hints})` : ''}. Try: "${cName} startup", "${cName} company", "${cName} crunchbase". ${companyContext.companyDescription ? `Known context: ${companyContext.companyDescription}` : ''} Report: what they do, website, size, founding date. Cite all sources.`),
+    callPerplexity(`Find funding info for "${cName}"${hints ? ` (${hints})` : ''}. Try: "${cName} funding", "${cName} raises", "${cName} investors", site:crunchbase.com "${cName}", site:techcrunch.com "${cName}". ${companyContext.additionalContext ? `Known investors: ${companyContext.additionalContext}` : ''} Report each round: amount, date, type, investors. Cite all.`),
+    callPerplexity(`Find news, hiring, tech stack for "${cName}"${hints ? ` (${hints})` : ''}. Try: "${cName} news 2025", "${cName} hiring", "${cName} press release". Report: recent announcements, open roles, tech stack, competitors. Cite all.`)
+  ]);
+
+  let companyResult = {
+    content: `=== Overview ===\n${r1.content}\n\n=== Funding ===\n${r2.content}\n\n=== News & Hiring ===\n${r3.content}`,
+    citations: [...r1.citations, ...r2.citations, ...r3.citations]
+  };
+
+  // Exa fallback if thin
+  if (isResearchThin(companyResult)) {
+    try {
+      const exaResult = await callExa([
+        { query: `${cName} company overview funding`, category: 'company' },
+        { query: `${cName} startup crunchbase funding investors` },
+        { query: `${cName} news announcement 2025`, category: 'news' },
+        { query: `site:crunchbase.com ${cName}` },
+        { query: `site:techcrunch.com ${cName}` }
+      ]);
+      if (exaResult.content) {
+        companyResult.content += `\n\n=== Exa Fallback ===\n${exaResult.content}`;
+        companyResult.citations = [...companyResult.citations, ...exaResult.citations];
+      }
+    } catch {}
+  }
+
+  // Analyst agent — structure + confidence score
+  onStep(3);
+  const structurePrompt = `You are a senior sales research analyst. Synthesize this research into a verified brief.
+
+PERSON RESEARCH:\n${personResult.content}
+COMPANY RESEARCH:\n${companyResult.content}
+${linkedin ? `LINKEDIN (high-trust primary source):\n"""\n${linkedin.slice(0, 2000)}\n"""` : ''}
+${companyContext.prospectTeam ? `PROSPECT TEAM: ${companyContext.prospectTeam}` : ''}
+${companyContext.prospectResponsibilities ? `PROSPECT RESPONSIBILITIES: ${companyContext.prospectResponsibilities}` : ''}
+${extraContext ? `EXTRA CONTEXT: ${extraContext}` : ''}
+CITED URLS: ${JSON.stringify(personResult.citations.concat(companyResult.citations))}
+
+CONFIDENCE RULES (be conservative):
+- "high": Multiple independent sources, specific facts with dates/numbers, < 6 months old
+- "medium": Single source, or 6–18 months old
+- "low": Inferred, unverified, > 18 months old
+NEVER mark "high" if key facts are missing. If no verified facts exist for a section, set omitted: true.
+
+Return ONLY this JSON:
+{
+  "sections": [
+    { "title": "PROSPECT BACKGROUND", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [{ "label": "", "url": "", "snippet": "" }] },
+    { "title": "COMPANY SNAPSHOT", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
+    { "title": "FUNDING & FINANCIALS", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
+    { "title": "HIRING SIGNALS", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
+    { "title": "TECH STACK", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
+    { "title": "CONVERSATION ANGLES", "content": "3 angles each citing a specific verified fact. Format: [Angle]: [sentence], because [evidence].", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] }
+  ]
+}`;
+
+  const structured = await callAnthropic(structurePrompt);
+  const sections = JSON.parse(structured.replace(/```json|```/g, '').trim()).sections;
+
+  // Writer + Critic agent loop
+  onStep(4);
+  const briefSummary = sections.filter(s => !s.omitted && s.content).map(s => `${s.title}:\n${s.content}`).join('\n\n');
+  const { outreach, iterations } = await writerCriticLoop(name, company, title, product, briefSummary, tone);
+
+  return { sections, outreach, iterations };
+}
+
+// ─── WRITER + CRITIC LOOP ─────────────────────────────────────────────────────
+const TONE_INSTRUCTIONS = {
+  direct: 'Direct and confident. No fluff. Get to the point in the first sentence.',
+  formal: 'Formal and polished. Complete sentences. Respectful throughout.',
+  casual: 'Casual and conversational. Sounds human, not like a sales bot.',
+  witty: 'Subtly witty — one clever observation. Still professional.'
+};
+
+async function writerCriticLoop(name, company, title, product, briefText, tone, maxIterations = 3) {
+  const iterations = [];
+  let draft = null;
+  let score = 0;
+
+  for (let i = 0; i < maxIterations; i++) {
+    // Writer
+    const writerPrompt = `You are an expert BDR writing outreach for ${name} (${title || 'professional'} at ${company}). Selling: ${product || 'SaaS software'}.
+TONE: ${TONE_INSTRUCTIONS[tone] || TONE_INSTRUCTIONS.direct}
+RESEARCH (use only facts from here):
+${briefText.slice(0, 3000)}
+${draft ? `PREVIOUS DRAFT (improve on this):\nSubject: ${draft.emailSubject}\n${draft.emailBody}` : ''}
+
+RULES:
+- First line MUST reference a specific real detail from research
+- No "I noticed", "I came across", "I saw that"
+- 4–5 sentences max
+- LinkedIn under 280 chars
+- If research too thin, start emailBody with "NOTE: " and use [FILL IN] placeholders
+
+Return ONLY JSON:
+{
+  "emailSubject": "under 8 words, specific",
+  "emailBody": "4-5 sentences, hyper-specific first line, soft CTA",
+  "linkedin": "under 280 chars, references something real"
+}`;
+
+    const writerText = await callAnthropic(writerPrompt, 1000);
+    draft = JSON.parse(writerText.replace(/```json|```/g, '').trim());
+
+    // Critic
+    const criticPrompt = `You are a cold outreach critic. Score this email draft and give feedback.
+
+RESEARCH AVAILABLE:
+${briefText.slice(0, 1500)}
+
+DRAFT:
+Subject: ${draft.emailSubject}
+${draft.emailBody}
+
+Score 1-10 on:
+- Personalization (does it reference specific real facts?)
+- Relevance (does the value prop connect to their situation?)
+- Tone (does it match: ${tone}?)
+- CTA (is it soft and clear?)
+
+Return ONLY JSON:
+{
+  "score": 7,
+  "pass": false,
+  "feedback": "one sentence on biggest weakness",
+  "suggestions": ["specific fix 1", "specific fix 2"]
+}
+"pass" is true if score >= 8.`;
+
+    const criticText = await callAnthropic(criticPrompt, 500);
+    const critique = JSON.parse(criticText.replace(/```json|```/g, '').trim());
+    iterations.push({ draft: { ...draft }, critique });
+    score = critique.score;
+    if (critique.pass) break;
+  }
+
+  return { outreach: { ...draft, personalizationScore: score, personalizationNote: iterations[iterations.length - 1]?.critique?.feedback || '' }, iterations };
+}
+
+// ─── SINGLE AGENT ─────────────────────────────────────────────────────────────
+async function runSingleAgent() {
+  const name = document.getElementById('prospectName').value.trim();
+  const company = document.getElementById('companyName').value.trim();
+  const title = document.getElementById('jobTitle').value.trim();
+  const email = document.getElementById('prospectEmail').value.trim();
+  const linkedin = document.getElementById('linkedinText').value.trim();
+  const product = document.getElementById('yourProduct').value.trim();
+  const extraContext = document.getElementById('extraContext').value.trim();
+
+  if (!name || !company) { showError('Please fill in Prospect Name and Company Name.', 'outputPanel'); return; }
+
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true; btn.textContent = 'Researching...';
+  showLoading(name, company, 'outputPanel');
+  document.getElementById('outreachPanel').innerHTML = '<div class="outreach-loading">Generating outreach...</div>';
+
+  try {
+    const { sections, outreach, iterations } = await researchProspect(
+      { name, company, title, linkedin, extraContext },
+      product, selectedTone,
+      (step) => setSingleLoadingStep(step)
+    );
+    renderBrief(name, company, title, sections, 'outputPanel');
+    renderOutreach(outreach, email, iterations);
+    saveToHistory({ name, company, title, email, linkedin, product, extraContext, sections, outreach, timestamp: Date.now() });
+  } catch (err) {
+    showError(`Error: ${err.message}`, 'outputPanel');
+    document.getElementById('outreachPanel').innerHTML = '<div class="outreach-empty">Research failed.</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Run Research Agent →';
+  }
+}
+
+function setSingleLoadingStep(active) {
+  document.querySelectorAll('#outputPanel .loading-step').forEach((el, i) => {
     el.classList.remove('active', 'done');
     if (i < active) el.classList.add('done');
     else if (i === active) el.classList.add('active');
   });
 }
 
-async function runAgent() {
-  const name = document.getElementById('prospectName').value.trim();
-  const company = document.getElementById('companyName').value.trim();
-  const title = document.getElementById('jobTitle').value.trim();
-  const linkedin = document.getElementById('linkedinText').value.trim();
-  const product = document.getElementById('yourProduct').value.trim();
-  const extraContext = document.getElementById('extraContext').value.trim();
-
-  if (!name || !company) { showError('Please fill in Prospect Name and Company Name.'); return; }
-
-  const btn = document.getElementById('runBtn');
-  btn.disabled = true;
-  btn.textContent = 'Researching...';
-  showLoading(name, company);
-  document.getElementById('outreachPanel').innerHTML = '<div class="outreach-loading">Generating outreach drafts...</div>';
-
-  try {
-    // STEP 1: Person research with strict sourcing instructions
-    setLoadingStep(0);
-    const personPrompt = `Find verified, sourced information about ${name}, ${title ? `who holds the title "${title}"` : 'a professional'} at ${company}.
-${linkedin ? `\nLINKEDIN PROFILE TEXT (treat this as ground truth — extract facts directly from here):\n"""\n${linkedin.slice(0, 3000)}\n"""` : ''}
-${extraContext ? `\nAdditional context provided:\n${extraContext}` : ''}
-
-Search for and report ONLY what you can find with real sources. For each fact, note your source.
-
-Look for:
-1. Current role at ${company}: exact title, start date if available
-2. Career history: previous companies, roles, rough dates — only if you can find evidence
-3. Public content: any LinkedIn posts, articles, talks, podcast appearances, interviews they've given
-4. Professional background: education, specializations — only verified sources
-5. Any notable achievements, awards, or recognitions with specific details
-
-FOR EACH CLAIM: state the source (publication name, URL, or "LinkedIn profile") and approximate date.
-If you cannot find verified information about a section, state: "No verified information found for [topic]."
-Do NOT fill gaps with generic industry assumptions.`;
-
-    const personResult = await callPerplexity(personPrompt);
-
-    // STEP 1.5: Extract company context from LinkedIn text if available
-    setLoadingStep(1);
-    let companyContext = { name: company, description: '', size: '', industry: '' };
-    if (linkedin) {
-      const extractPrompt = `Extract structured company information from this LinkedIn profile text. Return ONLY JSON, no explanation.
-
-LINKEDIN PROFILE TEXT:
-"""
-${linkedin.slice(0, 3000)}
-"""
-
-Return this JSON:
-{
-  "companyName": "exact company name as it appears",
-  "companyDescription": "what the company does based on the profile (job description, about section, etc.)",
-  "companySize": "employee count or size range if mentioned",
-  "industry": "industry or sector mentioned",
-  "prospectTeam": "which team or department the prospect works in",
-  "prospectResponsibilities": "key responsibilities or focus areas extracted from their role description",
-  "additionalContext": "any other company details mentioned (products, customers, tech, locations)"
-}`;
-      try {
-        const extracted = await callAnthropic(extractPrompt);
-        const parsed = JSON.parse(extracted.replace(/```json|```/g, '').trim());
-        companyContext = { ...companyContext, ...parsed };
-      } catch { /* fall through to defaults */ }
-    }
-
-    // STEP 2: Company research — three parallel searches, merged
-    setLoadingStep(2);
-    const cName = companyContext.companyName || company;
-    const cIndustry = companyContext.industry || '';
-    const cInvestors = companyContext.additionalContext || '';
-
-    // Build search hints from everything we know
-    const searchHints = [cIndustry, cInvestors].filter(Boolean).join(', ');
-
-    const companyPrompt1 = `Search for the company "${cName}"${searchHints ? ` (context: ${searchHints})` : ''}.
-
-Try multiple search angles if needed: "${cName} startup", "${cName} company", "${cName} funding", "${cName} crunchbase", "${cName} techcrunch". This may be a small or recently founded company — be persistent.
-
-${companyContext.companyDescription ? `WHAT WE ALREADY KNOW (from prospect's LinkedIn — use to disambiguate if multiple companies share the name):\n${companyContext.companyDescription}\n` : ''}
-
-Report what you find on:
-- What the company does, their product/service, target customers
-- Website URL if found
-- Company size / headcount
-- When they were founded
-
-For each fact, cite the source URL and date. If you truly cannot find anything, say so explicitly.`;
-
-    const companyPrompt2 = `Search for funding and financial news about "${cName}"${searchHints ? ` (${searchHints})` : ''}.
-
-Try: "${cName} funding round", "${cName} raises", "${cName} series A", "${cName} investors", "${cName} valuation", site:crunchbase.com "${cName}", site:techcrunch.com "${cName}".
-
-${companyContext.additionalContext ? `Known investor context: ${companyContext.additionalContext}` : ''}
-
-Report:
-- Each funding round: amount raised, date, round type (seed/A/B etc.), named investors
-- Total funding raised if known
-- Any acquisitions or notable financial events
-
-Cite source URL and date for every data point. If nothing found after trying multiple searches, say so.`;
-
-    const companyPrompt3 = `Search for recent news, hiring activity, and tech stack for "${cName}"${searchHints ? ` (${searchHints})` : ''}.
-
-Try: "${cName} jobs", "${cName} hiring", "${cName} news 2024", "${cName} news 2025", "${cName} press release", "${cName} partnership", "${cName} launch".
-
-Report:
-- Any news or announcements from the last 12 months (product launches, partnerships, leadership hires, expansions)
-- Current open roles or hiring trends (cite job board URL)
-- Any mentions of their tech stack, tools, or integrations
-- Key competitors mentioned in coverage
-
-Cite source URL and date for every item.`;
-
-    // Run all three in parallel
-    const [companyResult1, companyResult2, companyResult3] = await Promise.all([
-      callPerplexity(companyPrompt1),
-      callPerplexity(companyPrompt2),
-      callPerplexity(companyPrompt3)
-    ]);
-
-    let companyResult = {
-      content: `=== SEARCH 1: Overview ===\n${companyResult1.content}\n\n=== SEARCH 2: Funding ===\n${companyResult2.content}\n\n=== SEARCH 3: News & Hiring ===\n${companyResult3.content}`,
-      citations: [...companyResult1.citations, ...companyResult2.citations, ...companyResult3.citations]
-    };
-
-    // Exa fallback: if Perplexity came back thin, fire targeted Exa searches
-    if (isResearchThin(companyResult)) {
-      updateLoadingLabel(2, `③ Perplexity thin — firing Exa fallback for ${cName}...`);
-      try {
-        const exaResult = await callExa([
-          { query: `${cName} company overview funding`, category: 'company' },
-          { query: `${cName} startup crunchbase funding round investors` },
-          { query: `${cName} ${cIndustry} news announcement 2025`, category: 'news' },
-          { query: `site:crunchbase.com ${cName}` },
-          { query: `site:techcrunch.com ${cName}` }
-        ]);
-        if (exaResult.content) {
-          companyResult = {
-            content: companyResult.content + `\n\n=== EXA FALLBACK ===\n${exaResult.content}`,
-            citations: [...companyResult.citations, ...exaResult.citations]
-          };
-        }
-      } catch (exaErr) {
-        console.warn('Exa fallback failed:', exaErr.message);
-        // Non-fatal — continue with Perplexity results
-      }
-    }
-
-    // STEP 3: Structure, score confidence strictly, extract sources
-    setLoadingStep(3);
-    const structurePrompt = `You are a senior sales research analyst synthesizing raw research into a verified brief.
-
-PERSON RESEARCH (raw):
-${personResult.content}
-
-COMPANY RESEARCH (raw):
-${companyResult.content}
-
-${linkedin ? `LINKEDIN PROFILE (pasted directly by user — treat as high-trust primary source for prospect background):\n"""\n${linkedin.slice(0, 2000)}\n"""\n` : ''}
-${companyContext.prospectTeam ? `PROSPECT'S TEAM: ${companyContext.prospectTeam}\n` : ''}
-${companyContext.prospectResponsibilities ? `PROSPECT'S RESPONSIBILITIES (from LinkedIn): ${companyContext.prospectResponsibilities}\n` : ''}
-${extraContext ? `ADDITIONAL CONTEXT FROM USER:\n${extraContext}\n` : ''}
-
-CITED URLS FOUND: ${JSON.stringify(personResult.citations.concat(companyResult.citations))}
-
-Your job: structure this into a verified brief. Apply these STRICT confidence rules:
-
-CONFIDENCE SCORING RULES (be conservative — when in doubt, go lower):
-- "high": Multiple independent sources confirm the same specific fact with dates/numbers. Very recent (< 6 months).
-- "medium": Single source, or fact is plausible but only one reference found, or information is 6–18 months old.
-- "low": Inferred from indirect evidence, unverified, older than 18 months, or from a single low-authority source.
-- NEVER mark a section "high" if any key facts in it are unverified or missing.
-
-OMISSION RULE: If a section has no verified facts, set content to null and omitted to true with a reason.
-
-Return ONLY this JSON (no markdown, no explanation):
-{
-  "sections": [
-    {
-      "title": "PROSPECT BACKGROUND",
-      "content": "verified bullet points only, or null",
-      "confidence": "high|medium|low",
-      "confidenceNote": "specific reason for this confidence level — what's verified vs. what's missing",
-      "omitted": false,
-      "omittedReason": null,
-      "sources": [
-        { "label": "short source name", "url": "url or null", "snippet": "what this source confirmed" }
-      ]
-    },
-    {
-      "title": "COMPANY SNAPSHOT",
-      "content": "verified bullet points only, or null",
-      "confidence": "high|medium|low",
-      "confidenceNote": "specific reason",
-      "omitted": false,
-      "omittedReason": null,
-      "sources": []
-    },
-    {
-      "title": "FUNDING & FINANCIALS",
-      "content": "verified bullet points with round names, amounts, dates, investors — or null",
-      "confidence": "high|medium|low",
-      "confidenceNote": "specific reason",
-      "omitted": false,
-      "omittedReason": null,
-      "sources": []
-    },
-    {
-      "title": "HIRING SIGNALS",
-      "content": "verified open roles or hiring trends — or null",
-      "confidence": "high|medium|low",
-      "confidenceNote": "specific reason",
-      "omitted": false,
-      "omittedReason": null,
-      "sources": []
-    },
-    {
-      "title": "TECH STACK",
-      "content": "verified tools/platforms with evidence — or null",
-      "confidence": "high|medium|low",
-      "confidenceNote": "specific reason",
-      "omitted": false,
-      "omittedReason": null,
-      "sources": []
-    },
-    {
-      "title": "CONVERSATION ANGLES",
-      "content": "3 specific outreach angles — each MUST cite a specific verified fact from this research as the trigger. Format: [Angle]: [one sentence], because [specific cited evidence]. Do not invent triggers.",
-      "confidence": "high|medium|low",
-      "confidenceNote": "based on quality of underlying research",
-      "omitted": false,
-      "omittedReason": null,
-      "sources": []
-    }
-  ]
-}`;
-
-    const structured = await callAnthropic(structurePrompt);
-    const parsed = JSON.parse(structured.replace(/```json|```/g, '').trim());
-    const sections = parsed.sections;
-
-    renderBrief(name, company, title, sections);
-
-    // STEP 4: Outreach
-    setLoadingStep(4);
-    const briefSummary = sections
-      .filter(s => !s.omitted && s.content)
-      .map(s => `${s.title}:\n${s.content}`)
-      .join('\n\n');
-
-    const outreach = await generateOutreach(name, company, title, product, briefSummary, selectedTone);
-    renderOutreach(outreach);
-
-    saveToHistory({ name, company, title, linkedin, product, extraContext, sections, outreach, timestamp: Date.now() });
-
-  } catch (err) {
-    showError(`Error: ${err.message}`);
-    document.getElementById('outreachPanel').innerHTML = '<div class="outreach-empty">Research failed.</div>';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Run Research Agent →';
-  }
-}
-
-async function generateOutreach(name, company, title, product, briefText, tone) {
-  const toneInstructions = {
-    direct: 'Direct and confident. No fluff. Get to the point in the first sentence. Professional but not stiff.',
-    formal: 'Formal and polished. Complete sentences. Respectful and professional throughout.',
-    casual: 'Casual and conversational. Sounds like a human wrote it, not a sales bot. Slightly informal.',
-    witty: 'Subtly witty — one clever observation or unexpected angle. Still professional, not trying too hard.'
-  };
-
-  const prompt = `You are an expert BDR. Based on this research about ${name} (${title || 'professional'} at ${company}), write outreach for a rep selling ${product || 'SaaS software'}.
-
-TONE: ${toneInstructions[tone] || toneInstructions.direct}
-
-RESEARCH (only use specific facts from here — do not invent anything):
-${briefText.slice(0, 3000)}
-
-RULES:
-- The first line of the email MUST reference a specific, real detail from the research (a recent news item, a hiring trend, a funding round, something they said publicly). Do not use generic openers.
-- Do not use phrases like "I noticed", "I came across", "I saw that" — find more original openers.
-- The email should be 4–5 sentences max. No more.
-- LinkedIn message must be under 280 characters.
-- If the research doesn't have enough specific details for a strong personalized opener, say so in emailBody starting with "NOTE: " and provide a template with [FILL IN] placeholders instead.
-
-Return ONLY this JSON, no explanation:
-{
-  "emailSubject": "Subject line under 8 words — specific, not clickbait",
-  "emailBody": "4-5 sentence cold email. First line is hyper-specific. Ends with soft CTA.",
-  "linkedin": "Under 280 chars. References something real. No emojis.",
-  "personalizationScore": 1-10,
-  "personalizationNote": "one sentence on what makes this specific or what's missing"
-}`;
-
-  try {
-    const text = await callAnthropic(prompt);
-    return JSON.parse(text.replace(/```json|```/g, '').trim());
-  } catch {
-    return {
-      emailSubject: `Quick question about ${company}`,
-      emailBody: `Hi ${name.split(' ')[0]},\n\n[NOTE: Insufficient research data for personalization — fill in specific detail here.]\n\nWould you be open to a 15-minute call this week?\n\nBest,\n[Your Name]`,
-      linkedin: `Hi ${name.split(' ')[0]}, came across your profile and would love to connect.`,
-      personalizationScore: 1,
-      personalizationNote: 'Fallback template — research failed to return usable data.'
-    };
-  }
-}
-
-function showLoading(name, company) {
-  document.getElementById('outputPanel').innerHTML = `
+function showLoading(name, company, panelId) {
+  document.getElementById(panelId).innerHTML = `
     <div class="loading">
       <div class="loader"></div>
-      <div class="loading-text">Running dual research on ${name} & ${company}...</div>
+      <div class="loading-text">Researching ${name} @ ${company}...</div>
       <div class="loading-steps">
         <div class="loading-step active">① Sourcing ${name}...</div>
-        <div class="loading-step">② Extracting company from LinkedIn...</div>
-        <div class="loading-step">③ Running 3x Perplexity + Exa fallback on ${company}...</div>
-        <div class="loading-step">④ Verifying & scoring confidence...</div>
-        <div class="loading-step">⑤ Drafting ${selectedTone} outreach...</div>
+        <div class="loading-step">② Extracting company context from LinkedIn...</div>
+        <div class="loading-step">③ 3x Perplexity + Exa fallback on ${company}...</div>
+        <div class="loading-step">④ Analyst: structuring brief...</div>
+        <div class="loading-step">⑤ Writer + Critic loop (up to 3x)...</div>
       </div>
     </div>`;
 }
 
-function showError(msg) {
-  document.getElementById('outputPanel').innerHTML = `<div class="error-msg">${msg}</div>`;
+function showError(msg, panelId) {
+  document.getElementById(panelId).innerHTML = `<div class="error-msg">${msg}</div>`;
 }
 
-function calcAccuracy(sections) {
-  if (!sections || !sections.length) return 0;
-  const scores = { high: 100, medium: 60, low: 20 };
-  const active = sections.filter(s => !s.omitted);
-  if (!active.length) return 0;
-  const avg = active.reduce((sum, s) => sum + (scores[s.confidence] || 0), 0) / active.length;
-  return Math.round(avg);
+// ─── CSV PARSER ───────────────────────────────────────────────────────────────
+function handleCSV(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length < 2) return;
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/[^a-z_]/g, ''));
+    const col = k => headers.indexOf(k);
+
+    prospects = lines.slice(1).map((line, idx) => {
+      // Handle quoted fields
+      const cells = line.match(/(".*?"|[^,]+)(?=,|$)/g) || line.split(',');
+      const get = i => (cells[i] || '').replace(/^"|"$/g, '').trim();
+      return {
+        id: idx,
+        name: get(col('name')),
+        company: get(col('company')),
+        title: get(col('title')),
+        email: get(col('email')),
+        linkedin: col('linkedin_text') >= 0 ? get(col('linkedin_text')) : '',
+        status: 'pending',
+        score: null,
+        scoreData: null,
+        sections: null,
+        outreach: null,
+        iterations: null
+      };
+    }).filter(p => p.name && p.company);
+
+    document.getElementById('batchRunBtn').disabled = false;
+    renderBatchTable();
+    document.getElementById('uploadZone').querySelector('.upload-label').innerHTML = `<strong>${prospects.length} prospects loaded</strong><br>${file.name}`;
+  };
+  reader.readAsText(file);
 }
 
-function renderBrief(name, company, title, sections) {
-  const accuracy = calcAccuracy(sections);
-  const accuracyColor = accuracy >= 70 ? 'var(--accent)' : accuracy >= 40 ? '#ffb400' : 'var(--danger)';
+// ─── BATCH PIPELINE ────────────────────────────────────────────────────────────
+async function runBatchPipeline() {
+  if (!prospects.length) return;
+  const icp = {
+    industries: document.getElementById('icpIndustries').value.trim(),
+    titles: document.getElementById('icpTitles').value.trim(),
+    size: document.getElementById('icpSize').value.trim()
+  };
+  const threshold = parseInt(document.getElementById('scoreThreshold').value);
+  const product = document.getElementById('batchProduct').value.trim();
+  const btn = document.getElementById('batchRunBtn');
+  btn.disabled = true; btn.textContent = 'Running...';
 
-  const html = sections.map(s => {
-    if (s.omitted) {
-      return `
-        <div class="section">
-          <div class="section-header">
-            <div class="section-label">${s.title}</div>
-            <span class="conf-badge conf-low">OMITTED</span>
-          </div>
-          <div class="omitted-notice"><strong>No verified data found.</strong> ${s.omittedReason || 'Insufficient sourced information to include this section.'}</div>
-        </div>`;
+  // Phase 1: Score all prospects in parallel (batched)
+  renderBatchStatus('Scoring all prospects...');
+  const scorePromises = prospects.map(p => scoreProspect(p, icp).then(sd => { p.scoreData = sd; p.score = sd.score; }));
+  await Promise.all(scorePromises);
+
+  // Mark below-threshold
+  prospects.forEach(p => { if (p.score < threshold) p.status = 'below'; else p.status = 'queued'; });
+  renderBatchTable();
+
+  // Phase 2: Research qualified prospects sequentially (to avoid rate limits)
+  const qualified = prospects.filter(p => p.status === 'queued');
+  renderBatchStatus(`Researching ${qualified.length} qualified prospects...`);
+
+  for (const prospect of qualified) {
+    prospect.status = 'running';
+    renderBatchTable();
+    try {
+      const { sections, outreach, iterations } = await researchProspect(
+        prospect, product, selectedBatchTone, () => {}
+      );
+      prospect.sections = sections;
+      prospect.outreach = outreach;
+      prospect.iterations = iterations;
+      prospect.status = 'done';
+    } catch {
+      prospect.status = 'error';
     }
+    renderBatchTable();
+  }
 
-    const confClass = `conf-${s.confidence}`;
-    const noteHtml = s.confidenceNote ? `<div class="conf-note">⚠ ${s.confidenceNote}</div>` : '';
+  btn.disabled = false; btn.textContent = 'Run Pipeline →';
+  renderBatchStatus(null);
+}
 
-    const sourcesHtml = s.sources && s.sources.length ? `
-      <div class="sources-list">
-        <div class="sources-label">Sources</div>
-        ${s.sources.map(src => `
-          <div class="source-link">
-            ${src.url ? `<a href="${src.url}" target="_blank" rel="noopener">${src.label}</a>` : `<span style="color:#666">${src.label}</span>`}
-            ${src.snippet ? `<span class="source-snippet">${src.snippet}</span>` : ''}
+function renderBatchStatus(msg) {
+  let el = document.getElementById('batchStatusMsg');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'batchStatusMsg';
+    el.style.cssText = 'font-size:0.7rem;color:var(--accent);animation:pulse 1.5s ease-in-out infinite;margin-bottom:1rem;';
+    document.getElementById('batchMain').prepend(el);
+  }
+  el.textContent = msg || '';
+  el.style.display = msg ? 'block' : 'none';
+}
+
+function renderBatchTable() {
+  if (!prospects.length) return;
+  const main = document.getElementById('batchMain');
+  const qualified = prospects.filter(p => p.status !== 'below').length;
+  const done = prospects.filter(p => p.status === 'done' || p.status === 'sent').length;
+
+  main.innerHTML = `
+    <div class="pipeline-header">
+      <div>
+        <div class="pipeline-title">${prospects.length} Prospects</div>
+        <div class="pipeline-meta">${qualified} qualified · ${done} researched · ${prospects.filter(p=>p.status==='sent').length} sent</div>
+      </div>
+      <div class="batch-actions">
+        <button class="batch-btn secondary" onclick="exportCSV()">Export Results</button>
+      </div>
+    </div>
+    <table class="prospect-table">
+      <thead><tr>
+        <th>Name</th><th>Title</th><th>Company</th>
+        <th>ICP Score</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        ${prospects.map((p, i) => {
+          const scoreColor = !p.score ? '#333' : p.score >= 7 ? 'var(--accent)' : p.score >= 5 ? 'var(--warn)' : 'var(--danger)';
+          const statusClass = { pending: 'status-pending', queued: 'status-queued', running: 'status-running', done: 'status-done', sent: 'status-sent', below: 'status-below', error: 'status-below' }[p.status] || 'status-pending';
+          const statusLabel = { pending: 'Pending', queued: 'Queued', running: '● Running', done: 'Done', sent: 'Sent', below: 'Below threshold', error: 'Error' }[p.status] || p.status;
+          return `<tr>
+            <td style="font-family:'Syne',sans-serif;font-weight:600">${p.name}</td>
+            <td style="color:var(--muted)">${p.title || '—'}</td>
+            <td>${p.company}</td>
+            <td>
+              ${p.score ? `<div class="score-bar"><div class="score-fill" style="width:${p.score*10}%;background:${scoreColor}"></div></div><span class="score-num">${p.score}/10</span>` : '<span style="color:#333;font-size:0.65rem">—</span>'}
+            </td>
+            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+            <td style="display:flex;gap:0.4rem;align-items:center">
+              ${p.status === 'done' || p.status === 'sent' ? `<button class="view-btn" onclick="openDrawer(${i})">View →</button>` : ''}
+              ${p.status === 'done' ? `<button class="view-btn" onclick="openDrawer(${i})">Send Email</button>` : ''}
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ─── DRAWER ────────────────────────────────────────────────────────────────────
+function openDrawer(index) {
+  const p = prospects[index];
+  if (!p) return;
+  currentDrawerIndex = index;
+  document.getElementById('drawerName').textContent = p.name;
+  document.getElementById('drawerMeta').textContent = `${p.title || ''} · ${p.company}${p.email ? ' · ' + p.email : ''}`;
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('prospectDrawer').classList.add('open');
+
+  const body = document.getElementById('drawerBody');
+
+  // ICP score reasons
+  const scoreHtml = p.scoreData ? `
+    <div>
+      <div class="drawer-section-title">ICP Score · ${p.score}/10</div>
+      ${p.scoreData.reasons.map(r => `<div style="font-size:0.7rem;color:#888;padding:0.2rem 0;border-left:2px solid var(--accent);padding-left:0.5rem;margin-bottom:0.3rem">${r}</div>`).join('')}
+      ${p.scoreData.flags.length ? p.scoreData.flags.map(f => `<div style="font-size:0.7rem;color:var(--danger);padding:0.2rem 0;border-left:2px solid var(--danger);padding-left:0.5rem;margin-bottom:0.3rem">⚠ ${f}</div>`).join('') : ''}
+    </div>` : '';
+
+  // Brief
+  const briefHtml = p.sections ? buildBriefHtml(p.name, p.company, p.title, p.sections) : '<div style="color:var(--muted);font-size:0.75rem">No research yet.</div>';
+
+  // Critic iterations
+  const iterHtml = p.iterations && p.iterations.length > 1 ? `
+    <div>
+      <div class="drawer-section-title">Critic Iterations (${p.iterations.length})</div>
+      <div class="critic-iterations">
+        ${p.iterations.map((it, i) => `
+          <div class="critic-iter ${it.critique.pass ? 'pass' : ''}">
+            v${i+1} — Score ${it.critique.score}/10${it.critique.pass ? ' ✓ Passed' : ''} — ${it.critique.feedback || ''}
           </div>`).join('')}
-      </div>` : '';
+      </div>
+    </div>` : '';
 
+  // Email send block
+  const emailBlock = p.outreach ? buildSendBlock(p) : '<div style="color:var(--muted);font-size:0.75rem">No outreach generated yet.</div>';
+
+  body.innerHTML = scoreHtml + briefHtml + iterHtml + emailBlock;
+}
+
+function buildSendBlock(p) {
+  const { emailSubject, emailBody, linkedin, personalizationScore, personalizationNote } = p.outreach;
+  const scoreColor = personalizationScore >= 7 ? 'var(--accent)' : personalizationScore >= 4 ? 'var(--warn)' : 'var(--danger)';
+  const alreadySent = p.status === 'sent';
+
+  return `
+    <div>
+      <div class="drawer-section-title">Email Draft · Personalization ${personalizationScore}/10</div>
+      ${personalizationNote ? `<div style="font-size:0.65rem;color:${scoreColor};margin-bottom:0.8rem;line-height:1.5;padding:0.4rem 0.6rem;border-left:2px solid ${scoreColor}">${personalizationNote}</div>` : ''}
+      ${alreadySent ? `<div class="sent-confirm">✓ Email sent to ${p.email}</div>` : `
+        <div class="field" style="margin-bottom:0.6rem">
+          <label>To</label>
+          <input type="email" id="sendTo_${p.id}" value="${p.email || ''}" placeholder="recipient@company.com" />
+        </div>
+        <div class="field" style="margin-bottom:0.6rem">
+          <label>Subject</label>
+          <input type="text" id="sendSubject_${p.id}" value="${emailSubject || ''}" />
+        </div>
+        <div class="field" style="margin-bottom:0.8rem">
+          <label>Body (editable)</label>
+          <div class="editable-email" contenteditable="true" id="sendBody_${p.id}">${(emailBody || '').replace(/\n/g,'<br>')}</div>
+        </div>
+        <button class="send-btn" id="sendBtn_${p.id}" onclick="sendEmail(${p.id})">Approve & Send →</button>
+      `}
+    </div>
+    <div>
+      <div class="drawer-section-title">LinkedIn Message</div>
+      <div style="font-size:0.73rem;color:#ccc;line-height:1.7;margin-bottom:0.5rem">${linkedin || ''}</div>
+      <button class="copy-btn" onclick="copyText(this,'${(linkedin||'').replace(/'/g,"\\'")}')">Copy</button>
+    </div>`;
+}
+
+async function sendEmail(prospectId) {
+  const p = prospects.find(x => x.id === prospectId);
+  if (!p) return;
+  const to = document.getElementById(`sendTo_${prospectId}`)?.value.trim();
+  const subject = document.getElementById(`sendSubject_${prospectId}`)?.value.trim();
+  const bodyEl = document.getElementById(`sendBody_${prospectId}`);
+  const body = bodyEl ? bodyEl.innerText : '';
+  if (!to || !subject || !body) { alert('Please fill in To, Subject, and Body.'); return; }
+
+  const btn = document.getElementById(`sendBtn_${prospectId}`);
+  btn.disabled = true; btn.textContent = 'Sending...';
+
+  try {
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, subject, body })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Send failed');
+    p.status = 'sent';
+    renderBatchTable();
+    openDrawer(currentDrawerIndex); // refresh drawer
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Approve & Send →';
+    alert(`Failed to send: ${err.message}`);
+  }
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('prospectDrawer').classList.remove('open');
+  currentDrawerIndex = null;
+}
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = [['Name','Company','Title','Email','ICP Score','Status','Email Subject','Personalization Score']];
+  prospects.forEach(p => {
+    rows.push([p.name, p.company, p.title||'', p.email||'', p.score||'', p.status, p.outreach?.emailSubject||'', p.outreach?.personalizationScore||'']);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'prospect-results.csv'; a.click();
+}
+
+// ─── RENDER BRIEF ─────────────────────────────────────────────────────────────
+function buildBriefHtml(name, company, title, sections) {
+  const accuracy = calcAccuracy(sections);
+  const accuracyColor = accuracy >= 70 ? 'var(--accent)' : accuracy >= 40 ? 'var(--warn)' : 'var(--danger)';
+  const sectionsHtml = sections.map(s => {
+    if (s.omitted) return `
+      <div class="section">
+        <div class="section-header"><div class="section-label">${s.title}</div><span class="conf-badge conf-low">OMITTED</span></div>
+        <div class="omitted-notice"><strong>No verified data found.</strong> ${s.omittedReason || ''}</div>
+      </div>`;
     const safeContent = (s.content || '').replace(/\\/g,'\\\\').replace(/`/g,'\\`');
-
     return `
       <div class="section">
         <div class="section-header">
           <div class="section-label">${s.title}</div>
-          <span class="conf-badge ${confClass}">${s.confidence.toUpperCase()}</span>
+          <span class="conf-badge conf-${s.confidence}">${s.confidence.toUpperCase()}</span>
           <button class="copy-btn" onclick="copyText(this,\`${safeContent}\`)">Copy</button>
         </div>
-        ${noteHtml}
+        ${s.confidenceNote ? `<div class="conf-note">⚠ ${s.confidenceNote}</div>` : ''}
         <div class="section-content">${formatContent(s.content || '')}</div>
-        ${sourcesHtml}
+        ${s.sources?.length ? `<div class="sources-list"><div class="sources-label">Sources</div>${s.sources.map(src=>`<div class="source-link">${src.url?`<a href="${src.url}" target="_blank">${src.label}</a>`:`<span style="color:#666">${src.label}</span>`}${src.snippet?`<span class="source-snippet">${src.snippet}</span>`:''}</div>`).join('')}</div>` : ''}
       </div>`;
   }).join('');
-
-  document.getElementById('outputPanel').innerHTML = `
-    <div class="brief">
-      <div class="brief-header">
-        <div class="prospect-name">${name.split(' ')[0]} <span>${name.split(' ').slice(1).join(' ')}</span></div>
-        <div class="company-name">${title ? title + ' · ' : ''}${company} <span class="source-tag">Perplexity</span></div>
-      </div>
-      <div class="accuracy-bar">
-        <div class="accuracy-label">Brief Confidence</div>
-        <div class="accuracy-track"><div class="accuracy-fill" style="width:${accuracy}%;background:${accuracyColor}"></div></div>
-        <div class="accuracy-pct" style="color:${accuracyColor}">${accuracy}%</div>
-      </div>
-      ${html}
-    </div>`;
+  return `<div class="brief">
+    <div class="brief-header">
+      <div class="prospect-name">${name.split(' ')[0]} <span>${name.split(' ').slice(1).join(' ')}</span></div>
+      <div class="company-name">${title ? title + ' · ' : ''}${company}</div>
+    </div>
+    <div class="accuracy-bar">
+      <div class="accuracy-label">Brief Confidence</div>
+      <div class="accuracy-track"><div class="accuracy-fill" style="width:${accuracy}%;background:${accuracyColor}"></div></div>
+      <div class="accuracy-pct" style="color:${accuracyColor}">${accuracy}%</div>
+    </div>
+    ${sectionsHtml}
+  </div>`;
 }
 
-function renderOutreach(outreach) {
+function renderBrief(name, company, title, sections, panelId) {
+  document.getElementById(panelId).innerHTML = buildBriefHtml(name, company, title, sections);
+}
+
+function renderOutreach(outreach, email, iterations) {
   if (!outreach) return;
   const { emailSubject, emailBody, linkedin, personalizationScore, personalizationNote } = outreach;
-  const scoreColor = personalizationScore >= 7 ? 'var(--accent)' : personalizationScore >= 4 ? '#ffb400' : 'var(--danger)';
+  const scoreColor = personalizationScore >= 7 ? 'var(--accent)' : personalizationScore >= 4 ? 'var(--warn)' : 'var(--danger)';
+
+  const iterHtml = iterations && iterations.length > 1 ? `
+    <div class="critic-iterations" style="margin-bottom:0.6rem">
+      ${iterations.map((it,i) => `<div class="critic-iter ${it.critique.pass?'pass':''}">v${i+1} · ${it.critique.score}/10${it.critique.pass?' ✓':''} — ${it.critique.feedback||''}</div>`).join('')}
+    </div>` : '';
 
   document.getElementById('outreachPanel').innerHTML = `
     <div class="outreach-block">
-      ${personalizationNote ? `<div style="font-size:0.65rem;color:${scoreColor};line-height:1.5;padding:0.4rem 0.6rem;background:rgba(255,255,255,0.02);border-left:2px solid ${scoreColor}">Personalization ${personalizationScore}/10 — ${personalizationNote}</div>` : ''}
+      ${personalizationNote ? `<div style="font-size:0.65rem;color:${scoreColor};line-height:1.5;padding:0.4rem 0.6rem;border-left:2px solid ${scoreColor}">Personalization ${personalizationScore}/10 — ${personalizationNote}</div>` : ''}
+      ${iterHtml}
       <div class="outreach-item">
         <div class="outreach-item-label">Cold Email · ${selectedTone}</div>
         <div class="outreach-item-subject">Subject: ${emailSubject || ''}</div>
-        <div class="outreach-item-content">${(emailBody || '').replace(/\n/g, '<br>')}</div>
+        <div class="outreach-item-content">${(emailBody||'').replace(/\n/g,'<br>')}</div>
         <div class="outreach-item-footer">
-          <button class="copy-btn" onclick="copyText(this,\`Subject: ${(emailSubject||'').replace(/`/g,'\\`')}\n\n${(emailBody||'').replace(/`/g,'\\`')}\`)">Copy Email</button>
+          ${email ? `<button class="copy-btn" onclick="openSingleSendModal('${emailSubject?.replace(/'/g,"\\'")||''}','${(emailBody||'').replace(/\n/g,'\\n').replace(/'/g,"\\'")}','${email}')">Send →</button>` : ''}
+          <button class="copy-btn" onclick="copyText(this,\`Subject: ${(emailSubject||'').replace(/`/g,'\\`')}\n\n${(emailBody||'').replace(/`/g,'\\`')}\`)">Copy</button>
         </div>
       </div>
       <div class="outreach-item">
-        <div class="outreach-item-label">LinkedIn Message · ${selectedTone}</div>
-        <div class="outreach-item-content">${linkedin || ''}</div>
-        <div class="outreach-item-footer">
-          <button class="copy-btn" onclick="copyText(this,\`${(linkedin||'').replace(/`/g,'\\`')}\`)">Copy</button>
-        </div>
+        <div class="outreach-item-label">LinkedIn Message</div>
+        <div class="outreach-item-content">${linkedin||''}</div>
+        <div class="outreach-item-footer"><button class="copy-btn" onclick="copyText(this,\`${(linkedin||'').replace(/`/g,'\\`')}\`)">Copy</button></div>
       </div>
     </div>`;
+}
+
+// Single prospect send modal (inline in right panel)
+function openSingleSendModal(subject, body, email) {
+  const panel = document.getElementById('outreachPanel');
+  const existing = panel.querySelector('.outreach-block');
+  if (!existing) return;
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1rem;margin-bottom:1rem;';
+  modal.innerHTML = `
+    <div style="font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:0.6rem">Send Email</div>
+    <div class="field" style="margin-bottom:0.5rem"><label>To</label><input type="email" id="singleSendTo" value="${email}" /></div>
+    <div class="field" style="margin-bottom:0.5rem"><label>Subject</label><input type="text" id="singleSendSubject" value="${subject}" /></div>
+    <div class="field" style="margin-bottom:0.7rem"><label>Body</label><div class="editable-email" contenteditable="true" id="singleSendBody">${body.replace(/\\n/g,'<br>')}</div></div>
+    <div style="display:flex;gap:0.5rem">
+      <button class="send-btn" onclick="sendSingleEmail(this)">Approve & Send →</button>
+      <button class="copy-btn" onclick="this.closest('div[style]').remove()">Cancel</button>
+    </div>`;
+  panel.insertBefore(modal, existing);
+}
+
+async function sendSingleEmail(btn) {
+  const to = document.getElementById('singleSendTo')?.value.trim();
+  const subject = document.getElementById('singleSendSubject')?.value.trim();
+  const body = document.getElementById('singleSendBody')?.innerText;
+  if (!to || !subject || !body) { alert('Fill in all fields.'); return; }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    const res = await fetch('/api/send-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to, subject, body }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Send failed');
+    btn.closest('div[style]').innerHTML = '<div class="sent-confirm">✓ Email sent successfully</div>';
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Approve & Send →';
+    alert(`Failed: ${err.message}`);
+  }
+}
+
+// ─── SHARED UTILS ─────────────────────────────────────────────────────────────
+function calcAccuracy(sections) {
+  if (!sections?.length) return 0;
+  const scores = { high: 100, medium: 60, low: 20 };
+  const active = sections.filter(s => !s.omitted);
+  if (!active.length) return 0;
+  return Math.round(active.reduce((sum, s) => sum + (scores[s.confidence] || 0), 0) / active.length);
 }
 
 function formatContent(text) {
@@ -790,7 +1125,7 @@ function copyText(btn, text) {
   navigator.clipboard.writeText(text).then(() => { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 2000); });
 }
 
-document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') runAgent(); });
+document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && document.getElementById('tab-single').classList.contains('active')) runSingleAgent(); });
 renderHistory();
 </script>
 </body>
