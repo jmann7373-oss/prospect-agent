@@ -227,6 +227,7 @@
         <div style="font-size:0.58rem;color:#444;line-height:1.5;margin-top:0.2rem">Tip: Ctrl+A on profile page, then paste.</div>
       </div>
       <div class="field"><label>Your Product / Service</label><input type="text" id="yourProduct" placeholder="e.g. CRM software for sales teams" /></div>
+      <div class="field"><label>Your Name</label><input type="text" id="yourName" placeholder="e.g. Jake Reynolds" /></div>
       <div class="field"><label>Notes / Context (optional)</label><textarea id="extraContext" placeholder="Paste anything you already know..."></textarea></div>
       <div class="field">
         <label>Outreach Tone</label>
@@ -275,6 +276,11 @@
       <div class="field">
         <label>Your Product / Service</label>
         <input type="text" id="batchProduct" placeholder="e.g. CRM software for sales teams" />
+      </div>
+
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" id="batchYourName" placeholder="e.g. Jake Reynolds" />
       </div>
 
       <div class="field">
@@ -499,7 +505,7 @@ Return ONLY JSON:
 }
 
 // ─── RESEARCH PIPELINE (shared by single + batch) ──────────────────────────
-async function researchProspect(prospect, product, tone, onStep) {
+async function researchProspect(prospect, product, tone, yourName, onStep) {
   const { name, company, title, linkedin = '', extraContext = '' } = prospect;
   onStep(0);
 
@@ -586,8 +592,6 @@ Return ONLY this JSON:
     { "title": "PROSPECT BACKGROUND", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [{ "label": "", "url": "", "snippet": "" }] },
     { "title": "COMPANY SNAPSHOT", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
     { "title": "FUNDING & FINANCIALS", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
-    { "title": "HIRING SIGNALS", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
-    { "title": "TECH STACK", "content": "bullets or null", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] },
     { "title": "CONVERSATION ANGLES", "content": "3 angles each citing a specific verified fact. Format: [Angle]: [sentence], because [evidence].", "confidence": "high|medium|low", "confidenceNote": "why", "omitted": false, "omittedReason": null, "sources": [] }
   ]
 }`;
@@ -598,73 +602,108 @@ Return ONLY this JSON:
   // Writer + Critic agent loop
   onStep(4);
   const briefSummary = sections.filter(s => !s.omitted && s.content).map(s => `${s.title}:\n${s.content}`).join('\n\n');
-  const { outreach, iterations } = await writerCriticLoop(name, company, title, product, briefSummary, tone);
+  const { outreach, iterations } = await writerCriticLoop(name, company, title, product, briefSummary, tone, yourName);
 
   return { sections, outreach, iterations };
 }
 
 // ─── WRITER + CRITIC LOOP ─────────────────────────────────────────────────────
 const TONE_INSTRUCTIONS = {
-  direct: 'Direct and confident. No fluff. Get to the point in the first sentence.',
-  formal: 'Formal and polished. Complete sentences. Respectful throughout.',
-  casual: 'Casual and conversational. Sounds human, not like a sales bot.',
-  witty: 'Subtly witty — one clever observation. Still professional.'
+  direct: 'Warm but direct. Casual opener, get to the point fast, soft CTA. Like a smart friend reaching out, not a sales rep.',
+  formal: 'Professional and respectful. Still warm and human, not stiff or corporate. Clear value, polite ask.',
+  casual: 'Very casual and conversational. Short sentences. Feels like a text message, not an email.',
+  witty: 'One clever or unexpected observation to open. Warm, brief, human. Never try-hard.'
 };
 
-async function writerCriticLoop(name, company, title, product, briefText, tone, maxIterations = 3) {
+// Voice style guide extracted from real writing samples
+const VOICE_GUIDE = `
+WRITING STYLE — match this exactly:
+- Open with the prospect's first name and an exclamation or comma: "Hi [Name]!" or "Hey [Name],"
+- First sentence references something SPECIFIC and REAL about them or their company (a post, a role change, a news item, something from research)
+- Sentences are short and punchy — 10-15 words max each
+- Warm but not sycophantic — genuine curiosity, not flattery
+- End with a soft, low-pressure ask: "Would you have 10-15 min to chat?" or "Would love to connect!"
+- NO corporate phrases: no "I wanted to reach out", "I hope this finds you well", "touching base", "synergy", "circle back"
+- NO long paragraphs — 3 sentences max in the body
+- Sounds like a real person who did their homework, not a bot
+
+REAL EXAMPLES of this writing style:
+Example 1: "Hi Sarah! One of your posts popped up on my feed and I took a deep dive into Truewind. I am very interested in the BDR role and would love to connect with you!"
+Example 2: "Hey Isaac, I graduate in April from BYU and am very interested in beginning my career in sales. I plan on applying for the BDR position at Adaptive and would love to learn more about your experience. Would you have 10-15 min to chat this week?"
+
+EMAIL FORMAT:
+- Subject: short, specific, no clickbait (5-7 words)
+- Greeting: "Hi [First name]!" or "Hey [First name],"
+- Body: 2-3 short sentences only
+- Sign-off: "Thanks," or "Best," then a line break and [Your Name]
+`;
+
+async function writerCriticLoop(name, company, title, product, briefText, tone, yourName = 'Your Name', maxIterations = 3) {
   const iterations = [];
   let draft = null;
   let score = 0;
+  const firstName = name.split(' ')[0];
 
   for (let i = 0; i < maxIterations; i++) {
     // Writer
-    const writerPrompt = `You are an expert BDR writing outreach for ${name} (${title || 'professional'} at ${company}). Selling: ${product || 'SaaS software'}.
-TONE: ${TONE_INSTRUCTIONS[tone] || TONE_INSTRUCTIONS.direct}
-RESEARCH (use only facts from here):
-${briefText.slice(0, 3000)}
-${draft ? `PREVIOUS DRAFT (improve on this):\nSubject: ${draft.emailSubject}\n${draft.emailBody}` : ''}
+    const writerPrompt = `You are writing a cold outreach email on behalf of a BDR reaching out to ${name} (${title || 'professional'} at ${company}). They are selling: ${product || 'SaaS software'}.
 
-RULES:
-- First line MUST reference a specific real detail from research
-- No "I noticed", "I came across", "I saw that"
-- 4–5 sentences max
-- LinkedIn under 280 chars
-- If research too thin, start emailBody with "NOTE: " and use [FILL IN] placeholders
+${VOICE_GUIDE}
+
+RESEARCH (use only verified facts from here to personalize — do not invent anything):
+${briefText.slice(0, 3000)}
+
+${draft ? `PREVIOUS DRAFT (the critic scored it too low — improve it based on the style guide above):\nSubject: ${draft.emailSubject}\n${draft.emailBody}` : ''}
+
+STRICT RULES:
+- Start the email with "Hi ${firstName}!" or "Hey ${firstName},"
+- First sentence must reference a specific real detail from the research
+- Body is 2-3 sentences MAX — do not write more
+- End with a soft CTA like "Would you have 10-15 min to chat this week?" or "Would love to connect!"
+- Sign off with "Thanks," or "Best," on its own line, then "[Your Name]" on the next line
+- LinkedIn message under 280 chars, same casual warm voice, no emojis
+- If research is too thin to personalize, start emailBody with "NOTE: " and use [FILL IN SPECIFIC DETAIL] placeholder
 
 Return ONLY JSON:
 {
-  "emailSubject": "under 8 words, specific",
-  "emailBody": "4-5 sentences, hyper-specific first line, soft CTA",
-  "linkedin": "under 280 chars, references something real"
+  "emailSubject": "5-7 words, specific, no clickbait",
+  "emailBody": "Hi ${firstName}!\\n\\n[2-3 sentences]\\n\\nThanks,\\n${yourName}",
+  "linkedin": "under 280 chars, warm and specific"
 }`;
 
     const writerText = await callAnthropic(writerPrompt, 1000);
     draft = JSON.parse(writerText.replace(/```json|```/g, '').trim());
 
     // Critic
-    const criticPrompt = `You are a cold outreach critic. Score this email draft and give feedback.
+    const criticPrompt = `You are a cold outreach critic. Score this email against a specific writing style and give actionable feedback.
+
+WRITING STYLE IT SHOULD MATCH:
+- Opens with "Hi [Name]!" or "Hey [Name],"
+- First sentence references something specific and real from research
+- Body is 2-3 SHORT sentences only — not long paragraphs
+- Warm and casual — sounds like a smart person, not a sales bot
+- Ends with a soft low-pressure CTA ("Would you have 10-15 min to chat?" etc.)
+- Signs off with "Thanks," or "Best," then [Your Name]
+- Zero corporate phrases ("I wanted to reach out", "touching base", "synergy" etc.)
 
 RESEARCH AVAILABLE:
 ${briefText.slice(0, 1500)}
 
-DRAFT:
+DRAFT TO SCORE:
 Subject: ${draft.emailSubject}
 ${draft.emailBody}
 
-Score 1-10 on:
-- Personalization (does it reference specific real facts?)
-- Relevance (does the value prop connect to their situation?)
-- Tone (does it match: ${tone}?)
-- CTA (is it soft and clear?)
+Score 1-10 where 10 = perfectly matches the style above AND is well personalized.
+Deduct points for: too long, corporate language, generic opener, weak personalization, pushy CTA, missing sign-off format.
 
 Return ONLY JSON:
 {
   "score": 7,
   "pass": false,
-  "feedback": "one sentence on biggest weakness",
+  "feedback": "one sentence on the single biggest issue",
   "suggestions": ["specific fix 1", "specific fix 2"]
 }
-"pass" is true if score >= 8.`;
+"pass" is true only if score >= 8.`;
 
     const criticText = await callAnthropic(criticPrompt, 500);
     const critique = JSON.parse(criticText.replace(/```json|```/g, '').trim());
@@ -684,6 +723,7 @@ async function runSingleAgent() {
   const email = document.getElementById('prospectEmail').value.trim();
   const linkedin = document.getElementById('linkedinText').value.trim();
   const product = document.getElementById('yourProduct').value.trim();
+  const yourName = document.getElementById('yourName').value.trim() || 'Your Name';
   const extraContext = document.getElementById('extraContext').value.trim();
 
   if (!name || !company) { showError('Please fill in Prospect Name and Company Name.', 'outputPanel'); return; }
@@ -696,7 +736,7 @@ async function runSingleAgent() {
   try {
     const { sections, outreach, iterations } = await researchProspect(
       { name, company, title, linkedin, extraContext },
-      product, selectedTone,
+      product, selectedTone, yourName,
       (step) => setSingleLoadingStep(step)
     );
     renderBrief(name, company, title, sections, 'outputPanel');
@@ -785,6 +825,7 @@ async function runBatchPipeline() {
   };
   const threshold = parseInt(document.getElementById('scoreThreshold').value);
   const product = document.getElementById('batchProduct').value.trim();
+  const yourName = document.getElementById('batchYourName').value.trim() || 'Your Name';
   const btn = document.getElementById('batchRunBtn');
   btn.disabled = true; btn.textContent = 'Running...';
 
@@ -806,7 +847,7 @@ async function runBatchPipeline() {
     renderBatchTable();
     try {
       const { sections, outreach, iterations } = await researchProspect(
-        prospect, product, selectedBatchTone, () => {}
+        prospect, product, selectedBatchTone, yourName, () => {}
       );
       prospect.sections = sections;
       prospect.outreach = outreach;
